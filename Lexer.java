@@ -15,8 +15,20 @@ public class Lexer {
 	 *    [(, \, bat, ., bat, flies, ), cat, \, g, ., joy!, )]
 	 *
 	 */
+	private char[] individual_chars = {'(', ')', '/', ',', '.', '='};
+
 	public ArrayList<String> tokenize(String input) {
 		ArrayList<String> tokens = new ArrayList<String>();
+		char[] in = input.getCharArray();
+		for (int i =0; i < in.length; i++){
+			if (indivual_chars.contains(in[i])){
+				
+			}
+		
+		}
+
+
+		
 
 		// This next line is definitely incorrect!
 		tokens.add(input);
