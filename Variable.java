@@ -1,6 +1,6 @@
 
-abstract class Variable implements Expression {
-	private String name;
+public class Variable implements Expression {
+	protected String name;
 	
 	public Variable(String name) {
 		this.name = name;

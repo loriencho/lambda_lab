@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,23 +16,30 @@ public class Lexer {
 	 *    [(, \, bat, ., bat, flies, ), cat, \, g, ., joy!, )]
 	 *
 	 */
-	private char[] individual_chars = {'(', ')', '/', ',', '.', '='};
+	private ArrayList<String> individual_chars = new ArrayList<>(Arrays.asList("(", ")", "/", "," ".", "=", "λ"));
 
 	public ArrayList<String> tokenize(String input) {
 		ArrayList<String> tokens = new ArrayList<String>();
-		char[] in = input.getCharArray();
-		for (int i =0; i < in.length; i++){
-			if (indivual_chars.contains(in[i])){
-				
+
+		char[] in = (input.trim()).toCharArray();
+		String token = "";
+		for (int i =0; i < in.length; i++){ 
+			if (individual_chars.contains(in[i])){ // if special char just add 
+				tokens.add(token);
+				tokens.add(String.valueOf(in[i]));
+				token =  "";
 			}
-		
+			else if(in[i] == ' ' && !token.equals("")){ // add old token, start new token
+				tokens.add(token);
+				token = "";
+			}
+			else{ // continue building the token in str
+				token += in[i];
+			}
 		}
 
-
-		
-
-		// This next line is definitely incorrect!
-		tokens.add(input);
+		if (!token.equals("")) // add last token
+			tokens.add(token);
 
 		return tokens;
 	}
