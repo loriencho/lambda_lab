@@ -1,6 +1,10 @@
 
 public class Function implements Expression {
-    Variable var;
+    Variable operator;
+
+    public Function(Variable operator){
+        this.operator = operator;
+    }
 
     
 }

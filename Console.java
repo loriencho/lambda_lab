@@ -30,9 +30,7 @@ public class Console {
 				input = cleanConsoleInput();
 				continue;
 			}
-			
-			System.out.println(output);
-			
+						
 			input = cleanConsoleInput();
 		}
 		System.out.println("Goodbye!");

@@ -22,7 +22,12 @@ public class Parser {
 		if (tokens.size() == 1){
 			return new Variable(tokens.get(0));
 		}
-		return new Variable("");
+		else{
+			
+
+
+		}
+
 
 	}
 }

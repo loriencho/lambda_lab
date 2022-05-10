@@ -16,28 +16,57 @@ public class Lexer {
 	 *    [(, \, bat, ., bat, flies, ), cat, \, g, ., joy!, )]
 	 *
 	 */
-	private ArrayList<String> individual_chars = new ArrayList<>(Arrays.asList("(", ")", "/", "," ".", "=", "λ"));
+	private ArrayList<String> individual_chars = new ArrayList<>(Arrays.asList("(", ")", "/", ",",".", "="));
 
 	public ArrayList<String> tokenize(String input) {
 		ArrayList<String> tokens = new ArrayList<String>();
 
-		char[] in = (input.trim()).toCharArray();
 		String token = "";
-		for (int i =0; i < in.length; i++){ 
-			if (individual_chars.contains(in[i])){ // if special char just add 
-				tokens.add(token);
-				tokens.add(String.valueOf(in[i]));
-				token =  "";
+		input = input.trim();
+		
+		for (int i =0; i< input.length(); i++){
+			String current = input.substring(i, i+1);
+
+			if (current.equals(";")){
+				if (!token.equals("")){ //if we're building something in token currently
+					tokens.add(token);
+					token = "";			
+				}
+				break;
 			}
-			else if(in[i] == ' ' && !token.equals("")){ // add old token, start new token
-				tokens.add(token);
+			
+			else if (individual_chars.contains(current)){
+				if(!(token.equals(""))){
+					tokens.add(token);}
+				tokens.add(String.valueOf(current));
 				token = "";
 			}
-			else{ // continue building the token in str
-				token += in[i];
+			else if( i<input.length()-1 && (input.substring(i, i+2)).equals("λ")){
+				if(!(token.equals(""))){
+					tokens.add(token);
+				}
+				tokens.add("λ");
+				token = "";
+				
 			}
-		}
+			
+			else if (current.equals(" ")){ //if we get a space
 
+				if (!token.equals("")){ //if we're building something in token currently, add it because space means end of var name
+					tokens.add(token);
+					token = "";			
+				}
+				else{							// nothing in token - just whitespace
+					continue;
+				}
+			}
+			else {
+				token += current;
+			}
+
+			
+		}
+		
 		if (!token.equals("")) // add last token
 			tokens.add(token);
 
