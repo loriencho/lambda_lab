@@ -22,10 +22,12 @@ public class Parser {
 		// 	throw new ParseException("User typed \"Error\" as the input!", 0);
 		// }
 
+		/* ERROR CHECKING CODE
 		for(int i = start; i < end; i++){
 			System.out.print(tokens.get(i) + " ");
 		}
 		System.out.println();
+		*/
 
 
 		if ((end - start) <= 0){
@@ -50,25 +52,53 @@ public class Parser {
 		else {  // last item in tokens is a parenthesis
 			// find the opening parenthesis
 			// call parse on that range and return!!!
-
-			// find opening parenthesis NEED TO REWRITE TO DEAL WITH CASES LIKE a b c ((d e))
-			System.out.println("end is open paren");
-			int pos = end-1;
-			int openParen = pos;
-			while(tokens.get(pos) != "("){
-				pos--;
+			int openParenPos = getOpenParenPos(tokens, end);
+			if(stripParens(openParenPos, start)){
+				return parseRunner(tokens, start+1, end-1);
 			}
+			
+			/* ERROR CHECKING CODE
+			System.out.println("Running new application with");
+			System.out.println(String.valueOf(start) + " " + String.valueOf(openParenPos));
+			System.out.println(String.valueOf(openParenPos + 1) + " " + String.valueOf(end - 1));
+			*/
 
-			System.out.println(openParen);
+			return new Application(parseRunner(tokens, start, openParenPos), parseRunner(tokens, openParenPos+1, end-1));
 
-			return new Application(parseRunner(tokens, start, openParen), parseRunner(tokens, openParen+1, end-1));
-
-			}
-		
 		}
 		
-
+	}
+	public int getOpenParenPos(ArrayList<String> tokens, int end) throws ParseException{
+		int openParenStack = 0;
+		int closeParenStack = 1; // we are currently at a close paren
+		int currentPos = end-1;
+		int openParenPos = currentPos;
+		while(openParenStack != closeParenStack){
+			currentPos--;
+			if (tokens.get(currentPos).equals("(")){
+				openParenPos = currentPos;
+				openParenStack++;
+			}
+			if(tokens.get(currentPos).equals(")")){
+				closeParenStack++;
+			}
 		}
+
+		if(openParenPos == end-1){ //unbalanced parentheses
+			throw new ParseException("Parentheses are not balanced.", 0);
+		}
+		return openParenPos;
+	}
+
+	public boolean stripParens(int openParenPos, int start){
+		if(start == openParenPos){
+			return true;
+		}
+		return false;
+	}
+		
+
+}
 
 
 	
