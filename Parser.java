@@ -100,7 +100,7 @@ public class Parser {
 			return new Application(parseRunner(tokens, start, end-1), parseRunner(tokens, end-1, end));
 
 		else   
-			throw new ParseException("WIP! NOT CODED YET", 0);
+			throw new ParseException("RIP! NOT CODED YET", 0);
 		
 	}
 	public int getFirstLambdaPos(ArrayList<String> tokens, int start, int end){
@@ -132,7 +132,6 @@ public class Parser {
 
 		}
 					
-
 		return openParenPos;
 	}
 
@@ -146,15 +145,14 @@ public class Parser {
 				throw new ParseException("Parentheses are not balanced.", 0);
 			}
 
-			currentPos++;
 			if (tokens.get(currentPos).equals(")")){
 				closeParenPos = currentPos;
 				closeParenStack++;
 			}
 			if(tokens.get(currentPos).equals("("))
-				openParenStack++;
-			
+				openParenStack++;	
 		}
+		
 		return closeParenPos;
 	}
 
