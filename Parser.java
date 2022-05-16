@@ -22,29 +22,48 @@ public class Parser {
 		// 	throw new ParseException("User typed \"Error\" as the input!", 0);
 		// }
 
-		/* ERROR CHECKING CODE
+		//* ERROR CHECKING CODE
 		for(int i = start; i < end; i++){
 			System.out.print(tokens.get(i) + " ");
 		}
 		System.out.println();
-		*/
+		//*/
 
 
-		if ((end - start) <= 0){
+		// No tokens left
+		if ((end - start) <= 0)
 			return new Variable("");
-		}
-		if ((end-start) == 1){
-			return new Variable(tokens.get(start));
-		}
-		else if((end-start) == 2){
-			return new Application(new Variable(tokens.get(start)), new Variable(tokens.get(start+1)));
 
-		} //both are variables
+		// One token left
+		else if ((end-start) == 1)
+			return new Variable(tokens.get(start));
 		
-		// not equal to close paren
+		// Two tokens left
+		else if((end-start) == 2)
+			return new Application(new Variable(tokens.get(start)), new Variable(tokens.get(start+1)));
+		
+		// Lambda expression!
+		else if(tokens.get(start).equals("\\")){
+			int pos = start+1;
+			while(!tokens.get(pos).equals(".")){
+				pos++;
+				if (pos >= end)
+					throw new ParseException("No '.' found after lambda", 0);
+			}
+
+			if(pos == start + 2){ // only one bound variable
+				Variable var = new Variable(tokens.get(pos-1));
+				Expression ex = parseRunner(tokens, pos + 1, end);
+				return(new Function(var, ex));
+			}
+		
+			throw new ParseException("WIP! NOT CODED YET", 0);
+		}  
+		
+		// last item is not a close parentheses
 		else if (!(")").equals(tokens.get(end - 1))){  // last item in tokens is a variable
-			System.out.println("Start: " + start);
-			System.out.println("End: " + end);
+			//System.out.println("Start: " + start);
+			// System.out.println("End: " + end);
 
 			return new Application(parseRunner(tokens, start, end-1), parseRunner(tokens, end-1, end));
 		}

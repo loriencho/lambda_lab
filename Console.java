@@ -59,7 +59,7 @@ public class Console {
 			clean = deBOMified.substring(0, deBOMified.indexOf(";"));
 		}
 		
-		return clean.replaceAll("\\\\", "λ");
+		return clean.replaceAll("λ", "\\\\");
 	}
 	
 	

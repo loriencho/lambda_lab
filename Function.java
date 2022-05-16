@@ -9,11 +9,11 @@ public class Function implements Expression {
     }
     
     public static boolean isFunction(String str){
-		return str.equals("λ");
+		return str.equals("\\");
 	}
 
     public String toString(){
-        return "λ" + var + "." + exp;
+        return "(\\" + var + "." + exp + ")";
     }
 }
 

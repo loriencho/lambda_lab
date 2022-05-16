@@ -14,9 +14,9 @@ public class Lexer {
 	 *    (\bat  .bat flies)cat  λg.joy! )
 	 * you should output the ArrayList of strings
 	 *    [(, \, bat, ., bat, flies, ), cat, \, g, ., joy!, )]
-	 *
+	 
 	 */
-	private ArrayList<String> individual_chars = new ArrayList<>(Arrays.asList("(", ")", "/", ",",".", "="));
+	private ArrayList<String> individual_chars = new ArrayList<>(Arrays.asList("\\", "(", ")", "/", ".", "="));
 
 	public ArrayList<String> tokenize(String input) {
 		ArrayList<String> tokens = new ArrayList<String>();
@@ -41,14 +41,17 @@ public class Lexer {
 				tokens.add(String.valueOf(current));
 				token = "";
 			}
-			else if( i<input.length()-1 && (input.substring(i, i+2)).equals("λ")){
+			
+			/*
+			else if( i<input.length()-1 && (input.substring(i, i+2)).equals("\\")){
 				if(!(token.equals(""))){
 					tokens.add(token);
 				}
-				tokens.add("λ");
+				tokens.add("\\");
 				token = "";
 				
 			}
+			*/
 			
 			else if (current.equals(" ")){ //if we get a space
 
