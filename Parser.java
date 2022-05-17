@@ -129,6 +129,7 @@ public class Parser {
 			}
 			if(tokens.get(currentPos).equals(")"))
 				closeParenStack++;
+			currentPos--;
 
 		}
 					
@@ -150,7 +151,8 @@ public class Parser {
 				closeParenStack++;
 			}
 			if(tokens.get(currentPos).equals("("))
-				openParenStack++;	
+				openParenStack++;
+			currentPos++;	
 		}
 
 		return closeParenPos;
