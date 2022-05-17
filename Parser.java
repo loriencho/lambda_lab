@@ -27,8 +27,8 @@ public class Parser {
 			System.out.print(tokens.get(i) + " ");
 		}
 		System.out.println("Start: " + start);
-			System.out.println("End: " + end);
-			System.out.println();
+		System.out.println("End: " + end);
+		System.out.println();
 
 		//*/
 
@@ -152,7 +152,7 @@ public class Parser {
 			if(tokens.get(currentPos).equals("("))
 				openParenStack++;	
 		}
-		
+
 		return closeParenPos;
 	}
 
