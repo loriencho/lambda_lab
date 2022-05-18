@@ -34,31 +34,48 @@ public class Parser {
 
 		// No tokens left
 		if ((end - start) <= 0)
-			return new Variable("");
-
+			return new Variable("EMPTY");
 		// One token left
-		else if ((end-start) == 1)
+		if ((end-start) == 1){ 
+			System.out.println("one token left");
 			return new Variable(tokens.get(start));
+		}
 		
 		// Two tokens left
-		else if((end-start) == 2)
+		else if((end-start) == 2){ 
+			System.out.println("two tokens left");
 			return new Application(new Variable(tokens.get(start)), new Variable(tokens.get(start+1)));
+		}
+		// Last item is variable and there is parenthesis before it
+				
+		/*
+		else if(tokens.get(end-2).equals(")") && !tokens.get(end-1).equals(")")){
+			System.out.println("good day");
+			return new Application(parseRunner(tokens, start, end-1), parseRunner(tokens, end-1, end));
+		}
+		*/
 		
 		// First item in tokens is a parenthesis
+		
 		else if(tokens.get(start).equals("(")){
+			System.out.println("In open paren");
 			int closeParenPos = getCloseParenPos(tokens, start, end);
-			if(stripParens(closeParenPos, end))
+			if(stripParens(closeParenPos, end-1)){ 
+				System.out.println("stripping them");
 				return parseRunner(tokens, start+1, end-1); 
-			
-				return new Application(parseRunner(tokens, start + 1, closeParenPos), parseRunner(tokens, closeParenPos+1, end));
+			}
+			//System.out.println("not stripping");
+			return new Application(parseRunner(tokens, start + 1, closeParenPos), parseRunner(tokens, closeParenPos+1, end));
 		}
-	
+		
 
 		// Last item in tokens is a parenthesis
 		else if(tokens.get(end-1).equals(")")){
 			int openParenPos = getOpenParenPos(tokens, start, end); // Find the opening parenthesis
-			if(stripParens(openParenPos, start))
+			if(stripParens(openParenPos, start)){ 
+				System.out.println("Calling parseRunner after stripping parens"); 
 				return parseRunner(tokens, start+1, end-1);
+			}
 			
 			/* ERROR CHECKING CODE
 			System.out.println("Running new application with");
@@ -66,12 +83,13 @@ public class Parser {
 			System.out.println(String.valueOf(openParenPos + 1) + " " + String.valueOf(end - 1));
 			*/
 
+			//System.out.println("Calling parseRunner because last item in tokens is a paren"); 
 			return new Application(parseRunner(tokens, start, openParenPos), parseRunner(tokens, openParenPos+1, end-1));
 		}
 		
 		// Lambda expression!
 		else if(tokens.get(start).equals("\\")){
-			System.out.println("here");
+			System.out.println("first item is lambda");
 			int pos = start+1;
 			while(!tokens.get(pos).equals(".")){
 				pos++;
@@ -81,6 +99,7 @@ public class Parser {
 
 			if(pos == start + 2){ // only one bound variable
 				Variable var = new Variable(tokens.get(pos-1));
+				System.out.println("Calling parseRunner on " + String.valueOf(pos+1) + " and " + String.valueOf(end)); 
 				Expression ex = parseRunner(tokens, pos + 1, end);
 				return(new Function(var, ex));
 			}
@@ -89,21 +108,24 @@ public class Parser {
 		}  
 
 		// Expression that contains lambda expression
-		else if(getFirstLambdaPos(tokens, start, end) != -1){
-			System.out.println("here 2");
-			int pos = getFirstLambdaPos(tokens, start, end);
+		else if(getNextLambdaPos(tokens, start, end) != -1){
+			System.out.println("finding other lambda");
+			int pos = getNextLambdaPos(tokens, start, end);
+			System.out.println("Calling parse runner for lambda inside lambda");
 			return new Application(parseRunner(tokens, start, pos), parseRunner(tokens, pos, end));
 		}
 		
 		// Last item is a variable that isn't part of a lambda expression
-		else if (!(")").equals(tokens.get(end - 1))) // last item in tokens is a variable
+		else if (!(")").equals(tokens.get(end - 1))){ // last item in tokens is a variable
+			System.out.println("Calling parse runner when last item is var that is not part of lambda");
 			return new Application(parseRunner(tokens, start, end-1), parseRunner(tokens, end-1, end));
+		}
 
 		else   
 			throw new ParseException("RIP! NOT CODED YET", 0);
 		
 	}
-	public int getFirstLambdaPos(ArrayList<String> tokens, int start, int end){
+	public int getNextLambdaPos(ArrayList<String> tokens, int start, int end){
 		int pos = start;
 		while(pos < end){
 			if(tokens.get(pos).equals("\\")){
