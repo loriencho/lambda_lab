@@ -1,5 +1,7 @@
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -7,6 +9,7 @@ import java.util.regex.Pattern;
 
 public class Console {
 	private static Scanner in;
+	public static HashMap<String, Expression> variables = new HashMap<String, Expression>();
 	
 	public static void main(String[] args) {
 		in = new Scanner (System.in);
@@ -17,16 +20,34 @@ public class Console {
 		String input = cleanConsoleInput();
 		
 		while (! input.equalsIgnoreCase("exit")) {
+			int len = variables.size();
 			
 			ArrayList<String> tokens = lexer.tokenize(input);
 
 			String output = "";
 			
 			try {
-				Expression exp = parser.parse(tokens);
-				output = exp.toString();
 
-				System.out.println(output);
+				if (tokens.size() > 1 && tokens.get(1).equals("=")){
+					if(!variables.containsKey(tokens.get(0))){
+
+						// GET SUBARRAY OF TOKENS!!!! TO EXCLUDE THE = AND BEFOREHAND. 
+						ArrayList<String> newTokens = tokens.subList(2, tokens.size());
+						variables.put(tokens.get(0), parser.parse(newTokens));
+						System.out.println("Added " + variables.get(tokens.get(0)) +" as " + tokens.get(0));
+					}
+					else {
+						System.out.println(tokens.get(0) + "is already defined.");
+					}
+					
+	
+				}
+				else {
+					Expression exp = parser.parse(tokens);
+					output = exp.toString();
+					System.out.println(output);
+
+				}
 			} catch (Exception e) {
 				System.out.println("Unparsable expression, input was: \"" + input + "\"");
 				input = cleanConsoleInput();

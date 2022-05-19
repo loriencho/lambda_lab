@@ -2,6 +2,7 @@
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class Parser {
 	
@@ -10,10 +11,17 @@ public class Parser {
 	 */
 
 	public Expression parse(ArrayList<String> tokens) throws ParseException{
+		
+		for (int i = 0; i < tokens.size(); i++){
+			if (Console.variables.containsKey(tokens.get(i))){
+				tokens.set(i, Console.variables.get(tokens.get(i)).toString());
+			}
+
+		}
 		return parseRunner(tokens, 0, tokens.size());
 
 	}
-	public Expression parseRunner(ArrayList<String> tokens, int start, int end) throws ParseException {
+	private Expression parseRunner(ArrayList<String> tokens, int start, int end) throws ParseException {
 		//end is the size of the sub array
 		
 		// This is nonsense code, just to show you how to thrown an Exception.
@@ -22,14 +30,14 @@ public class Parser {
 		// 	throw new ParseException("User typed \"Error\" as the input!", 0);
 		// }
 
-		//* ERROR CHECKING CODE
-		System.out.println("Parserunner run");
-		for(int i = start; i < end; i++){
-			System.out.print(tokens.get(i) + " ");
-		}
-		System.out.println("Start: " + start);
-		System.out.println("End: " + end);
-		System.out.println();
+		// //* ERROR CHECKING CODE
+		// System.out.println("Parserunner run");
+		// for(int i = start; i < end; i++){
+		// 	System.out.print(tokens.get(i) + " ");
+		// }
+		// System.out.println("Start: " + start);
+		// System.out.println("End: " + end);
+		// System.out.println();
 
 		//*/
 
@@ -39,7 +47,6 @@ public class Parser {
 
 		// One token left
 		if ((end-start) == 1){ 
-			System.out.println("one token left");
 			return new Variable(tokens.get(start));
 		}
 		
@@ -84,6 +91,7 @@ public class Parser {
 
 					// to be coded - alpha reduction!!!!!
 				}
+			
 				else{
 					// Add variable to expression
 					expressions.add(new Variable(tokens.get(pos)));
