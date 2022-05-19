@@ -23,6 +23,7 @@ public class Parser {
 		// }
 
 		//* ERROR CHECKING CODE
+		System.out.println("Parserunner run");
 		for(int i = start; i < end; i++){
 			System.out.print(tokens.get(i) + " ");
 		}
@@ -32,58 +33,74 @@ public class Parser {
 
 		// No tokens left
 		if ((end - start) <= 0)
-			return new Variable("");
+			return new FreeVariable(""); // ASK MR ISECKE!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		// One token left
 		else if ((end-start) == 1)
 			return new Variable(tokens.get(start));
 		
-		// Two tokens left
-		else if((end-start) == 2)
-			return new Application(new Variable(tokens.get(start)), new Variable(tokens.get(start+1)));
-		
-		// Lambda expression!
-		else if(tokens.get(start).equals("\\")){
-			int pos = start+1;
-			while(!tokens.get(pos).equals(".")){
+		else {
+
+			ArrayList<Expression> expressions = new ArrayList<Expression>();
+			int pos = start;
+			while (pos < end){
+				
+				// Parentheses case
+				if (tokens.get(pos).equals("(")){
+
+					// Locate closing parentheses
+					int parens = 1;
+					int parenPos = pos;
+					while (parens != 0){
+						parenPos++;
+						if (tokens.get(parenPos).equals("("))
+							parens++;
+						else if (tokens.get(parenPos).equals(")"))
+							parens--;
+					}
+					
+					// Add expression inside parentheses
+					expressions.add(parseRunner(tokens, pos+1, parenPos));
+					pos = parenPos++;
+				}
+
+				// functions case
+				else if (tokens.get(pos).equals("\\")){
+					ArrayList<Variable> params = new ArrayList<Variable>();
+					pos++;
+					while (!tokens.get(pos).equals(".")){
+						params.add(new Variable(tokens.get(pos)));
+						pos++;
+					}
+					
+					// deal with the expression after the .
+					if (params.size() == 1)
+						expressions.add( new Function(params.get(0), parseRunner(tokens, pos+1, end)));
+						pos = end;
+
+					// to be coded - alpha reduction!!!!!
+				}
+				else{
+					// Add variable to expression
+					expressions.add(new Variable(tokens.get(pos)));
+				}
+
 				pos++;
-				if (pos >= end)
-					throw new ParseException("No '.' found after lambda", 0);
 			}
 
-			if(pos == start + 2){ // only one bound variable
-				Variable var = new Variable(tokens.get(pos-1));
-				Expression ex = parseRunner(tokens, pos + 1, end);
-				return(new Function(var, ex));
+			// only one expression!
+			if (expressions.size() == 1)
+				return expressions.get(0);
+
+			// build tree of expressions
+			else{
+
+				Application app = new Application(expressions.get(0), expressions.get(1));
+				for(int i = 2; i < expressions.size(); i++){
+					app = new Application(app, expressions.get(i));
+				}
+				return app;
 			}
-		
-			throw new ParseException("WIP! NOT CODED YET", 0);
-		}  
-		
-		// last item is not a close parentheses
-		else if (!(")").equals(tokens.get(end - 1))){  // last item in tokens is a variable
-			//System.out.println("Start: " + start);
-			// System.out.println("End: " + end);
-
-			return new Application(parseRunner(tokens, start, end-1), parseRunner(tokens, end-1, end));
-		}
-
-		else {  // last item in tokens is a parenthesis
-			// find the opening parenthesis
-			// call parse on that range and return!!!
-			int openParenPos = getOpenParenPos(tokens, end);
-			if(stripParens(openParenPos, start)){
-				return parseRunner(tokens, start+1, end-1);
-			}
-			
-			/* ERROR CHECKING CODE
-			System.out.println("Running new application with");
-			System.out.println(String.valueOf(start) + " " + String.valueOf(openParenPos));
-			System.out.println(String.valueOf(openParenPos + 1) + " " + String.valueOf(end - 1));
-			*/
-
-			return new Application(parseRunner(tokens, start, openParenPos), parseRunner(tokens, openParenPos+1, end-1));
-
 		}
 		
 	}
