@@ -30,14 +30,12 @@ public class Console {
 
 				if (tokens.size() > 1 && tokens.get(1).equals("=")){
 					if(!variables.containsKey(tokens.get(0))){
-
-						// GET SUBARRAY OF TOKENS!!!! TO EXCLUDE THE = AND BEFOREHAND. 
-						ArrayList<String> newTokens = tokens.subList(2, tokens.size());
+						ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(2, tokens.size()));
 						variables.put(tokens.get(0), parser.parse(newTokens));
 						System.out.println("Added " + variables.get(tokens.get(0)) +" as " + tokens.get(0));
 					}
 					else {
-						System.out.println(tokens.get(0) + "is already defined.");
+						System.out.println(tokens.get(0) + " is already defined.");
 					}
 					
 	
