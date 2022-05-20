@@ -28,6 +28,7 @@ public class Console {
 			
 			try {
 
+				// setting a variable
 				if (tokens.size() > 1 && tokens.get(1).equals("=")){
 					if(!variables.containsKey(tokens.get(0))){
 						ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(2, tokens.size()));
@@ -37,13 +38,26 @@ public class Console {
 					else {
 						System.out.println(tokens.get(0) + " is already defined.");
 					}
-					
-	
+				}
+				// run!!
+				else if (tokens.size() > 1 && tokens.get(0).equals("run")){
+					ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(1, tokens.size()));
+					Expression exp = parser.parse(newTokens);
+					if (!(exp instanceof Application && ((Application)exp).getLeft() instanceof Function)) {
+						System.out.println("Not subbing");
+						System.out.println(exp.toString());
+					}
+					else{
+						System.out.println("Subbing");
+						Expression subbed = substitute(((Application)exp).getLeft(), ((Application)exp).getRight());
+						System.out.println(subbed);
+					}
+
+
 				}
 				else {
 					Expression exp = parser.parse(tokens);
-					output = exp.toString();
-					System.out.println(output);
+					System.out.println(exp.toString());
 
 				}
 			} catch (Exception e) {
@@ -57,7 +71,17 @@ public class Console {
 		System.out.println("Goodbye!");
 	}
 
-	
+	private static Expression substitute(Expression exp, Expression sub){
+		// exp is the left expression that will be substituted into
+		// sub is the right eexpression that is being substituted 
+		HashMap<Variable, Expression> boundVars = new HashMap<Variable, Expression>();
+		boundVars.put(((Function)exp).getVariable(), sub);
+		return substituteRunner(exp, sub, boundVars);
+	}
+
+	private static Expression substituteRunner(Expression exp, Expression sub, HashMap<Variable, Expression> bound){
+
+	}
 	
 	/*
 	 * Collects user input, and ...

@@ -1,7 +1,7 @@
 
 public class Function implements Expression {
-    Variable var;
-    Expression exp;
+    private Variable var;
+    private Expression exp;
 
     public Function(Variable var, Expression exp){
         this.var = var;
@@ -14,6 +14,15 @@ public class Function implements Expression {
 
     public String toString(){
         return "(\\" + var + "." + exp + ")";
+    }
+
+    public Expression getExpression(){
+        return exp;
+    }
+
+    public Variable getVariable(){
+
+        return var;
     }
 }
 
