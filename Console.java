@@ -43,10 +43,10 @@ public class Console {
 				else if (tokens.size() > 1 && tokens.get(0).equals("run")){
 					ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(1, tokens.size()));
 					Expression exp = parser.parse(newTokens);
-					Expression subbed = substitute(exp);
+					Expression subbed = substitute(exp); // always call substitute no matter waht
 
 
-					if(subbed instanceof Variable){
+					if(subbed instanceof Variable){ //error checking code... apologies for the terrible indentation
 						System.out.println("var");
 						}
 						else if(subbed instanceof Function){
@@ -85,8 +85,11 @@ public class Console {
 		Expression right; 
 
 		if (!(original instanceof Application && (((Application)original).getLeft() instanceof Function))) {
-			return original;
+			return original; // this was originally in main (like this is what runs when we type run cat)
 		}
+		// this else if along with the next one are meant to solve our issue of substitute not handling
+		// when the left or right expression is an application
+		// the issue is though that the are never called so I think there's an error in the recursion
 		else if ((original instanceof Application) && (((Application)original).getLeft() instanceof Application)){
 			System.out.println("left is app");
 			left = ((Application)original).getLeft();
@@ -99,7 +102,8 @@ public class Console {
 			right = ((Application)original).getRight();
 			return new Application(left, substitute(right));
 		}
-		else{
+		// and all of this is our original code
+		else{ 
 			left = ((Application)original).getLeft();
 			right = ((Application)original).getRight();
 			System.out.println("Subbing");
@@ -111,7 +115,8 @@ public class Console {
 			if (exp instanceof Application && ((Application)exp).getLeft() instanceof Function){
 				return substitute(exp);
 			}
-			return exp;
+			return exp; // should this return substitute(exp)? I'm actually not sure because the code returns
+						// the same thing regardless of if we do return exp; or return substitute(exp);
 		}
 	}
 
