@@ -43,15 +43,25 @@ public class Console {
 				else if (tokens.size() > 1 && tokens.get(0).equals("run")){
 					ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(1, tokens.size()));
 					Expression exp = parser.parse(newTokens);
-					if (!(exp instanceof Application && ((Application)exp).getLeft() instanceof Function)) {
-						System.out.println("Not subbing");
-						System.out.println(exp.toString());
-					}
-					else{
-						System.out.println("Subbing");
-						Expression subbed = substitute(((Application)exp).getLeft(), ((Application)exp).getRight());
-						System.out.println(subbed);
-					}
+					Expression subbed = substitute(exp);
+
+
+					if(subbed instanceof Variable){
+						System.out.println("var");
+						}
+						else if(subbed instanceof Function){
+						System.out.println("func");
+						}
+						else{
+								System.out.println("app");
+							if(((Application)subbed).getLeft() instanceof Application){
+								System.out.println("yes");
+							}
+							else{
+								System.out.println("no");
+							}
+						}
+					System.out.println(subbed);
 
 
 				}
@@ -70,18 +80,39 @@ public class Console {
 		}
 		System.out.println("Goodbye!");
 	}
+	private static Expression substitute(Expression original){
+		Expression left; 
+		Expression right; 
 
-	private static Expression substitute(Expression exp, Expression sub){
-		// exp is the left expression that will be substituted into
-		// sub is the right expression that is being substituted 
-
-		Function f = (Function)exp;
-		exp = substituteRunner(f.getExpression(), sub, f.getVariable());
-		while (exp instanceof Application && ((Application)exp).getLeft() instanceof Function) {
-			Application app = (Application)exp;
-			exp = substitute(app.getLeft(), app.getRight());
+		if (!(original instanceof Application && (((Application)original).getLeft() instanceof Function))) {
+			return original;
 		}
-		return exp;
+		else if ((original instanceof Application) && (((Application)original).getLeft() instanceof Application)){
+			System.out.println("left is app");
+			left = ((Application)original).getLeft();
+			right = ((Application)original).getRight();
+			return new Application(substitute(left), right);
+		}
+		else if ((original instanceof Application) && (((Application)original).getRight() instanceof Application)){
+			System.out.println("right is app");
+			left = ((Application)original).getLeft();
+			right = ((Application)original).getRight();
+			return new Application(left, substitute(right));
+		}
+		else{
+			left = ((Application)original).getLeft();
+			right = ((Application)original).getRight();
+			System.out.println("Subbing");
+			Expression exp = left;
+			Expression sub = right;
+			Function f = (Function)exp;
+			exp = substituteRunner(f.getExpression(), sub, f.getVariable());
+		
+			if (exp instanceof Application && ((Application)exp).getLeft() instanceof Function){
+				return substitute(exp);
+			}
+			return exp;
+		}
 	}
 
 	private static Expression substituteRunner(Expression exp, Expression sub, Variable bound){

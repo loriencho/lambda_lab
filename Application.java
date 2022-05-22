@@ -19,4 +19,11 @@ public class Application implements Expression {
     public String toString(){
         return ("(" + left.toString() + " " + right.toString() + ")");
     }
+
+    public Boolean equals(Application app){
+        if((app.getLeft().equals(this.getLeft())) && (app.getRight().equals(this.getRight()))){
+            return true;
+        }
+        return false;
+    }
 }

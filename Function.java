@@ -24,6 +24,13 @@ public class Function implements Expression {
 
         return var;
     }
+
+    public Boolean equals(Function func){
+        if((func.getVariable().equals(this.getVariable())) && func.getExpression().equals(this.getExpression())){
+            return true;
+        }
+        return false;
+    }
 }
 
 /*

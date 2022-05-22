@@ -15,4 +15,5 @@ public class Variable implements Expression {
 		return variable.toString().equals(this.toString());
 
 	}
+
 }
