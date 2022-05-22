@@ -10,4 +10,9 @@ public class Variable implements Expression {
 		return name;
 	}
 
+	
+	public boolean equals(Variable variable){
+		return variable.toString().equals(this.toString());
+
+	}
 }

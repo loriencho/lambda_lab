@@ -73,14 +73,39 @@ public class Console {
 
 	private static Expression substitute(Expression exp, Expression sub){
 		// exp is the left expression that will be substituted into
-		// sub is the right eexpression that is being substituted 
-		HashMap<Variable, Expression> boundVars = new HashMap<Variable, Expression>();
-		boundVars.put(((Function)exp).getVariable(), sub);
-		return substituteRunner(exp, sub, boundVars);
+		// sub is the right expression that is being substituted 
+
+		Function f = (Function)exp;
+		exp = substituteRunner(f.getExpression(), sub, f.getVariable());
+		while (exp instanceof Application && ((Application)exp).getLeft() instanceof Function) {
+			Application app = (Application)exp;
+			exp = substitute(app.getLeft(), app.getRight());
+		}
+		return exp;
 	}
 
-	private static Expression substituteRunner(Expression exp, Expression sub, HashMap<Variable, Expression> bound){
+	private static Expression substituteRunner(Expression exp, Expression sub, Variable bound){
+		if (exp instanceof Application){
+			Application app = (Application)exp;
+			return new Application(substituteRunner(app.getLeft(), sub, bound), substituteRunner(app.getRight(), sub, bound));
+		}
+		else if (exp instanceof Function){
+			Function f  = (Function)exp;
+			if (f.getVariable().equals(bound)){
+				return f;
+			}
+			else 
+				return substituteRunner(f.getExpression(), sub, bound);
+		}
+		else{
+			// Variable case
+			Variable var = (Variable)exp;
+			if (var.equals(bound))
+				return deepCopy(sub);
+			else 
+				return var;
 
+		}
 	}
 	
 	/*
@@ -91,6 +116,21 @@ public class Console {
 	 * and (4) replace all backslashes with λ.
 	 */
 	
+	private static Expression deepCopy(Expression exp){
+		if(exp instanceof Variable){
+			return new Variable(exp.toString());
+		}
+		else if(exp instanceof Function){
+			Function f = (Function)exp;
+			return new Function((Variable) deepCopy(f.getVariable()), deepCopy(f.getExpression()));
+		}
+		else{ // is an application
+			Application app = (Application)exp;
+			return new Application(deepCopy(app.getLeft()), deepCopy(app.getRight()));
+		}
+
+	}
+	  
 	private static String cleanConsoleInput() {
 		System.out.print("> ");
 		String raw = in.nextLine();
