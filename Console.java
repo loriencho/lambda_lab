@@ -84,12 +84,12 @@ public class Console {
 		Expression left; 
 		Expression right; 
 
-		if (!(original instanceof Application && (((Application)original).getLeft() instanceof Function))) {
-			return original; // this was originally in main (like this is what runs when we type run cat)
+		if ((original instanceof Application) && (((Application)original).getLeft() instanceof Application) && (((Application)original).getRight() instanceof Application)){
+			System.out.println("left is app");
+			left = ((Application)original).getLeft();
+			right = ((Application)original).getRight();
+			return new Application(substitute(left), substitute(right));
 		}
-		// this else if along with the next one are meant to solve our issue of substitute not handling
-		// when the left or right expression is an application
-		// the issue is though that the are never called so I think there's an error in the recursion
 		else if ((original instanceof Application) && (((Application)original).getLeft() instanceof Application)){
 			System.out.println("left is app");
 			left = ((Application)original).getLeft();
@@ -102,6 +102,13 @@ public class Console {
 			right = ((Application)original).getRight();
 			return new Application(left, substitute(right));
 		}
+		else if (!(original instanceof Application && (((Application)original).getLeft() instanceof Function))) {
+			System.out.println("doing this");
+			return original; // this was originally in main (like this is what runs when we type run cat)
+		}
+		// this else if along with the next one are meant to solve our issue of substitute not handling
+		// when the left or right expression is an application
+		// the issue is though that the are never called so I think there's an error in the recursion
 		// and all of this is our original code
 		else{ 
 			left = ((Application)original).getLeft();
@@ -115,7 +122,8 @@ public class Console {
 			if (exp instanceof Application && ((Application)exp).getLeft() instanceof Function){
 				return substitute(exp);
 			}
-			return exp; // should this return substitute(exp)? I'm actually not sure because the code returns
+			System.out.println("HERE");
+			return substitute(exp); // should this return substitute(exp)? I'm actually not sure because the code returns
 						// the same thing regardless of if we do return exp; or return substitute(exp);
 		}
 	}
