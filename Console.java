@@ -84,16 +84,7 @@ public class Console {
 		Expression left; 
 		Expression right; 
 
-		if (!(original instanceof Application && (((Application)original).getLeft() instanceof Function))) {
-			return original;
-		}
-		else if ((original instanceof Application) && (((Application)original).getLeft() instanceof Application)){
-			System.out.println("left is app");
-			left = ((Application)original).getLeft();
-			right = ((Application)original).getRight();
-			return new Application(substitute(left), right);
-		}
-		else if ((original instanceof Application) && (((Application)original).getRight() instanceof Application)){
+		if ((original instanceof Application) && (((Application)original).getRight() instanceof Application)){
 			System.out.println("right is app");
 			left = ((Application)original).getLeft();
 			right = ((Application)original).getRight();
