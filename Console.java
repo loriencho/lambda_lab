@@ -45,7 +45,6 @@ public class Console {
 					Expression exp = parser.parse(newTokens);
 					Expression subbed = substitute(exp);
 
-
 					if(subbed instanceof Variable){
 						System.out.println("var");
 						}
@@ -62,7 +61,6 @@ public class Console {
 							}
 						}
 					System.out.println(subbed);
-
 
 				}
 				else {
@@ -81,28 +79,23 @@ public class Console {
 		System.out.println("Goodbye!");
 	}
 	private static Expression substitute(Expression original){
-		Expression left; 
-		Expression right; 
 
-		if ((original instanceof Application) && (((Application)original).getRight() instanceof Application)){
-			System.out.println("right is app");
-			left = ((Application)original).getLeft();
-			right = ((Application)original).getRight();
-			return new Application(left, substitute(right));
-		}
-		else{
-			left = ((Application)original).getLeft();
-			right = ((Application)original).getRight();
-			System.out.println("Subbing");
-			Expression exp = left;
-			Expression sub = right;
-			Function f = (Function)exp;
-			exp = substituteRunner(f.getExpression(), sub, f.getVariable());
-		
-			if (exp instanceof Application && ((Application)exp).getLeft() instanceof Function){
-				return substitute(exp);
+
+		if (original instanceof Application){
+			Expression left  = ((Application)original).getLeft();
+			Expression right = ((Application)original).getRight();
+			if (((Application)original).getLeft() instanceof Function){
+				System.out.println("Subbing");
+				Function f = (Function)left;
+				left = substituteRunner(f.getExpression(), right, f.getVariable());
+				return substitute(left);
 			}
-			return exp;
+			else {
+				return new Application(substitute(left), substitute(right));
+			}
+		}
+		else {
+			return original;
 		}
 	}
 
@@ -113,11 +106,11 @@ public class Console {
 		}
 		else if (exp instanceof Function){
 			Function f  = (Function)exp;
-			if (f.getVariable().equals(bound)){
-				return f;
+			if (!f.getVariable().equals(bound)){
+				return new Function(f.getVariable(), substituteRunner(f.getExpression(), sub, bound));
 			}
 			else 
-				return substituteRunner(f.getExpression(), sub, bound);
+				return f;
 		}
 		else{
 			// Variable case

@@ -11,14 +11,23 @@ public class Parser {
 	 */
 
 	public Expression parse(ArrayList<String> tokens) throws ParseException{
+		int openCounter = 0;
+		int closeCounter = 0;
 		
 		for (int i = 0; i < tokens.size(); i++){
+			// Variable code
 			if (Console.variables.containsKey(tokens.get(i))){
 				System.out.println("Replaced");
 				tokens.set(i, Console.variables.get(tokens.get(i)).toString());
 			}
-
+			// Paren balancing
+			if (tokens.get(i).equals(")"))
+				closeCounter++;
+			else if (tokens.get(i).equals("("))
+				openCounter++;
 		}
+		if(openCounter != closeCounter)
+			throw new ParseException("Paren not balanced", 0);
 		return parseRunner(tokens, 0, tokens.size());
 
 	}
@@ -107,7 +116,6 @@ public class Parser {
 
 			// build tree of expressions
 			else{
-
 				Application app = new Application(expressions.get(0), expressions.get(1));
 				for(int i = 2; i < expressions.size(); i++){
 					app = new Application(app, expressions.get(i));
