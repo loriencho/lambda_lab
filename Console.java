@@ -31,8 +31,16 @@ public class Console {
 				// setting a variable
 				if (tokens.size() > 1 && tokens.get(1).equals("=")){
 					if(!variables.containsKey(tokens.get(0))){
-						ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(2, tokens.size()));
-						variables.put(tokens.get(0), parser.parse(newTokens));
+						if(tokens.get(2).equals("run")){
+							ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(3, tokens.size()));
+							Expression exp = parser.parse(newTokens);
+							Expression subbed = substitute(exp);
+							variables.put(tokens.get(0), subbed);
+						}
+						else{
+							ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(2, tokens.size()));
+							variables.put(tokens.get(0), parser.parse(newTokens));
+						}
 						System.out.println("Added " + variables.get(tokens.get(0)) +" as " + tokens.get(0));
 					}
 					else {
