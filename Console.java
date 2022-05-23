@@ -43,7 +43,7 @@ public class Console {
 				else if (tokens.size() > 1 && tokens.get(0).equals("run")){
 					ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(1, tokens.size()));
 					Expression exp = parser.parse(newTokens);
-					Expression subbed = substitute(exp); // always call substitute no matter waht
+					Expression subbed = substitute(exp); // always call substitute no matter what
 
 
 					if(subbed instanceof Variable){ //error checking code... apologies for the terrible indentation
@@ -84,6 +84,8 @@ public class Console {
 		Expression left; 
 		Expression right; 
 
+		// first three cases are to deal with if left/right expressions are applications instead of functions
+		// allows for simplification
 		if ((original instanceof Application) && (((Application)original).getLeft() instanceof Application) && (((Application)original).getRight() instanceof Application)){
 			System.out.println("left is app");
 			left = ((Application)original).getLeft();
@@ -123,8 +125,7 @@ public class Console {
 				return substitute(exp);
 			}
 			System.out.println("HERE");
-			return substitute(exp); // should this return substitute(exp)? I'm actually not sure because the code returns
-						// the same thing regardless of if we do return exp; or return substitute(exp);
+			return substitute(exp); 
 		}
 	}
 
