@@ -43,10 +43,10 @@ public class Console {
 				else if (tokens.size() > 1 && tokens.get(0).equals("run")){
 					ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(1, tokens.size()));
 					Expression exp = parser.parse(newTokens);
-					Expression subbed = substitute(exp); // always call substitute no matter what
+					Expression subbed = substitute(exp);
 
 
-					if(subbed instanceof Variable){ //error checking code... apologies for the terrible indentation
+					if(subbed instanceof Variable){
 						System.out.println("var");
 						}
 						else if(subbed instanceof Function){
@@ -84,13 +84,8 @@ public class Console {
 		Expression left; 
 		Expression right; 
 
-		// first three cases are to deal with if left/right expressions are applications instead of functions
-		// allows for simplification
-		if ((original instanceof Application) && (((Application)original).getLeft() instanceof Application) && (((Application)original).getRight() instanceof Application)){
-			System.out.println("left is app");
-			left = ((Application)original).getLeft();
-			right = ((Application)original).getRight();
-			return new Application(substitute(left), substitute(right));
+		if (!(original instanceof Application && (((Application)original).getLeft() instanceof Function))) {
+			return original;
 		}
 		else if ((original instanceof Application) && (((Application)original).getLeft() instanceof Application)){
 			System.out.println("left is app");
@@ -104,15 +99,7 @@ public class Console {
 			right = ((Application)original).getRight();
 			return new Application(left, substitute(right));
 		}
-		else if (!(original instanceof Application && (((Application)original).getLeft() instanceof Function))) {
-			System.out.println("doing this");
-			return original; // this was originally in main (like this is what runs when we type run cat)
-		}
-		// this else if along with the next one are meant to solve our issue of substitute not handling
-		// when the left or right expression is an application
-		// the issue is though that the are never called so I think there's an error in the recursion
-		// and all of this is our original code
-		else{ 
+		else{
 			left = ((Application)original).getLeft();
 			right = ((Application)original).getRight();
 			System.out.println("Subbing");
@@ -124,8 +111,7 @@ public class Console {
 			if (exp instanceof Application && ((Application)exp).getLeft() instanceof Function){
 				return substitute(exp);
 			}
-			System.out.println("HERE");
-			return substitute(exp); 
+			return exp;
 		}
 	}
 
