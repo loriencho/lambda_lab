@@ -52,12 +52,13 @@ public class Parser {
 		//*/
 
 		// No tokens left
-		if ((end - start) <= 0)
+		//COME BACK TO THIS: we might be able to delete this 
+		if ((end - start) <= 0)			
 			return new FreeVariable(""); // ASK MR ISECKE!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		// One token left
 		if ((end-start) == 1){ 
-			return new Variable(tokens.get(start));
+			return returnVariableType(paramVariables, tokens.get(start));
 		}
 		
 		else {
@@ -100,6 +101,8 @@ public class Parser {
 						Expression exp = parseRunner(tokens, pos+1, end, paramVariables);
 						// CREATE A PARAMETER VARIABLE
 
+
+						//System.out.println("Parameter variable " + params.get(0));
 						ParameterVariable param = new ParameterVariable(params.get(0));
 						// add parameter variable to the list
 						paramVariables.add(param);
@@ -115,13 +118,7 @@ public class Parser {
 			
 				else{
 					// Add variable to expression
-					expressions.add(new Variable(tokens.get(pos)));
-
-
-					// if it is bound to a parameter variable
-							// add it to the parameter variable's list
-					if 
-					// else it's a free variable
+					expressions.add(returnVariableType(paramVariables, tokens.get(pos)));
 				}
 
 				pos++;
@@ -137,9 +134,30 @@ public class Parser {
 				for(int i = 2; i < expressions.size(); i++){
 					app = new Application(app, expressions.get(i));
 				}
+				
 				return app;
 			}
 		}
+	}
+
+	public Variable returnVariableType(ArrayList<ParameterVariable> paramVariables, String variable){
+		
+		boolean contains = false;
+
+		for(int i = 0; i < paramVariables.size(); i++){
+			if(variable.equals(paramVariables.get(i).name)){
+				contains = true;
+				break;
+			}
+		}
+		if(contains){
+			//System.out.println("Bound variable: " + variable);
+			return new BoundVariable(variable);
+		} 
+
+		//System.out.println("Free variable: " + variable);
+		return new FreeVariable(variable);
+
 	}
 
 

@@ -51,24 +51,11 @@ public class Console {
 				else if (tokens.size() > 1 && tokens.get(0).equals("run")){
 					ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(1, tokens.size()));
 					Expression exp = parser.parse(newTokens);
+					HashMap<String, ArrayList<Variable>> satwikalist = getVariables(exp);
 					Expression subbed = substitute(exp);
-
-					if(subbed instanceof Variable){
-						System.out.println("var");
-						}
-						else if(subbed instanceof Function){
-						System.out.println("func");
-						}
-						else{
-								System.out.println("app");
-							if(((Application)subbed).getLeft() instanceof Application){
-								System.out.println("yes");
-							}
-							else{
-								System.out.println("no");
-							}
-						}
 					System.out.println(subbed);
+
+					System.out.println("Parameters: " + satwikalist.get("parameter").toString());
 
 				}
 				else {
@@ -130,6 +117,61 @@ public class Console {
 
 		}
 	}
+
+	private static HashMap<String, ArrayList<Variable>> getVariables(Expression exp){
+		return getVariables(exp, new ArrayList<Variable>(), new ArrayList<Variable>(), new ArrayList<Variable>());
+	}
+
+	private static HashMap<String, ArrayList<Variable>> getVariables(Expression exp, ArrayList<Variable> fVariables, ArrayList<Variable> pVariables, ArrayList<Variable> bVariables){
+		HashMap<String, ArrayList<Variable>> a = new HashMap<String, ArrayList<Variable>>();
+
+		if (exp instanceof Variable){
+			System.out.println("HELLLOOOOOOOOOOOO");
+			if (exp instanceof FreeVariable){
+				fVariables.add((FreeVariable)exp);
+			}
+			else if(exp instanceof ParameterVariable){
+				pVariables.add((ParameterVariable)exp);
+			}
+			else{
+				bVariables.add((BoundVariable)exp);
+			}
+			a.put("free", fVariables);
+			a.put("parameter", pVariables);
+			a.put("bound", bVariables);
+			return a;
+		}
+
+		else if (exp instanceof Function){
+			Function f = (Function)exp;
+			pVariables.add(f.getVariable());
+			return getVariables(f.getExpression(), fVariables, pVariables, bVariables);
+
+		}
+
+		//else
+		Application app = (Application)exp;
+
+		/*
+		POTENTIALLY
+		take result of getVariables on left and right expression 
+		and take the resulting lists from the hashmaps
+		and combine them
+		and return them in a new hashmap
+		*/
+		
+		/*
+		take result of getVariables on left and right expression 
+		and take the resulting lists from the hashmaps
+
+		compare similarities of the param and free and
+			do something.
+
+			
+		*/
+		
+	}
+
 	
 	/*
 	 * Collects user input, and ...
