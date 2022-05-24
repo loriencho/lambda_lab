@@ -28,10 +28,10 @@ public class Parser {
 		}
 		if(openCounter != closeCounter)
 			throw new ParseException("Paren not balanced", 0);
-		return parseRunner(tokens, 0, tokens.size());
+		return parseRunner(tokens, 0, tokens.size(), new ArrayList<ParameterVariable>());
 
 	}
-	private Expression parseRunner(ArrayList<String> tokens, int start, int end) throws ParseException {
+	private Expression parseRunner(ArrayList<String> tokens, int start, int end, ArrayList<ParameterVariable> paramVariables) throws ParseException {
 		//end is the size of the sub array
 		
 		// This is nonsense code, just to show you how to thrown an Exception.
@@ -81,30 +81,47 @@ public class Parser {
 					}
 					
 					// Add expression inside parentheses
-					expressions.add(parseRunner(tokens, pos+1, parenPos));
+					expressions.add(parseRunner(tokens, pos+1, parenPos, paramVariables));
 					pos = parenPos++;
 				}
 
 				// functions case
 				else if (tokens.get(pos).equals("\\")){
-					ArrayList<Variable> params = new ArrayList<Variable>();
+
+					// adds all parameters to list
+					ArrayList<String> params = new ArrayList<String>();
 					pos++;
 					while (!tokens.get(pos).equals(".")){
-						params.add(new Variable(tokens.get(pos)));
+						params.add(tokens.get(pos));
 						pos++;
 					}
 					
-					// deal with the expression after the .
-					if (params.size() == 1)
-						expressions.add( new Function(params.get(0), parseRunner(tokens, pos+1, end)));
+					if (params.size() == 1){
+						Expression exp = parseRunner(tokens, pos+1, end, paramVariables);
+						// CREATE A PARAMETER VARIABLE
+
+						ParameterVariable param = new ParameterVariable(params.get(0));
+						// add parameter variable to the list
+						paramVariables.add(param);
+						expressions.add(new Function(param, parseRunner(tokens, pos+1, end, paramVariables)));
+						paramVariables.remove(param);
+						// remove from the list
 						pos = end;
 
-					// to be coded - alpha reduction!!!!!
+					}
+
+					// does not deal with more than one parameter
 				}
 			
 				else{
 					// Add variable to expression
 					expressions.add(new Variable(tokens.get(pos)));
+
+
+					// if it is bound to a parameter variable
+							// add it to the parameter variable's list
+					if 
+					// else it's a free variable
 				}
 
 				pos++;
