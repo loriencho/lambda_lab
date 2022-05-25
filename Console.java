@@ -56,6 +56,8 @@ public class Console {
 					System.out.println(subbed);
 
 					System.out.println("Parameters: " + satwikalist.get("parameter").toString());
+					System.out.println("Bound: " + satwikalist.get("bound").toString());
+					System.out.println("Free: " + satwikalist.get("free").toString());
 
 				}
 				else {
@@ -151,6 +153,10 @@ public class Console {
 
 		//else
 		Application app = (Application)exp;
+		HashMap<String, ArrayList<Variable>> left = getVariables(app.getLeft(), fVariables, pVariables, bVariables);
+
+		return getVariables(app.getRight(), fVariables, pVariables, bVariables); // the arraylists should be updated by left because of pass by reference??
+
 
 		/*
 		POTENTIALLY
