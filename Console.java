@@ -55,6 +55,13 @@ public class Console {
 					ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(1, tokens.size()));
 					Expression exp = parser.parse(newTokens);
 
+					System.out.println("Returned from parsing after run. Exp: " + exp + "Exp class: " + exp.getClass().getName() );
+					if (exp instanceof Application){
+						System.out.println("Casts to application. Left: " + ((Application)exp).getLeft() + "Left class: " + ((Application)exp).getLeft().getClass().getName());
+
+					}
+
+
 					// later - it does not need to be in a variable but it still needs to be called
 					getVariables(exp);
 					Expression subbed = substitute(exp);
@@ -81,14 +88,13 @@ public class Console {
 		System.out.println("Goodbye!");
 	}
 	private static Expression substitute(Expression original){
-
+		System.out.println("Sub gets run");
 
 		if (original instanceof Application){
 			Expression left  = ((Application)original).getLeft();
 			Expression right = ((Application)original).getRight();
-			
-			alphaReduce(left, right);			
-			
+			original = alphaReduce(left, right);			
+
 			if (left instanceof Function){
 				Function f = (Function)left;
 				left = substituteRunner(f.getExpression(), right, f.getVariable());
@@ -128,7 +134,7 @@ public class Console {
 	}
 
 	
-	public static void alphaReduce(Expression left, Expression right){
+	public static Application alphaReduce(Expression left, Expression right){
 		ArrayList<Variable> leftParams = getVariables(left).get("parameter");
 		ArrayList<Variable> rightVariables = getVariables(right).get("free");
 		rightVariables.addAll(getVariables(right).get("parameter"));
@@ -137,24 +143,16 @@ public class Console {
 			Variable leftParam = leftParams.get(i);
 			ParameterVariable param = ((ParameterVariable)leftParam);
 
-			boolean rightContainsParam = false;
-			for(int j = 0; j < rightVariables.size(); j++){
 
+			for(int j = 0; j < rightVariables.size(); j++){
 				if(rightVariables.get(j).name.equals(param.name)){
-					rightContainsParam = true;
+					rename(param);
 					break;
 				}
 			}
-			if (rightContainsParam){
-				rename(param);
-
-			}
-		
-		
-		
-		
 		}
 
+		return new Application(left, right);
 	}
 
 	public static boolean addToNames(ArrayList<Variable> vars){
@@ -204,6 +202,8 @@ public class Console {
 		HashMap<String, ArrayList<Variable>> a = new HashMap<String, ArrayList<Variable>>();
 		if (exp instanceof Variable){
 			if (exp instanceof FreeVariable){
+				System.out.println("This is  exp: " +exp +"and this is its class " + exp.getClass().getName());
+
 				fVariables.add((FreeVariable)exp);
 			}
 			else if(exp instanceof ParameterVariable){

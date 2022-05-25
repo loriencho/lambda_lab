@@ -17,7 +17,6 @@ public class Parser {
 		for (int i = 0; i < tokens.size(); i++){
 			// Variable code
 			if (Console.variables.containsKey(tokens.get(i))){
-				System.out.println("Replaced");
 				tokens.set(i, Console.variables.get(tokens.get(i)).toString());
 			}
 			// Paren balancing
