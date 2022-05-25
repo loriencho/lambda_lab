@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 public class Console {
 	private static Scanner in;
 	public static HashMap<String, Expression> variables = new HashMap<String, Expression>();
+	public static ArrayList<String> variableNames = new ArrayList<String>();
 	
 	public static void main(String[] args) {
 		in = new Scanner (System.in);
@@ -29,7 +30,9 @@ public class Console {
 			try {
 
 				// setting a variable
-				if (tokens.size() > 1 && tokens.get(1).equals("=")){
+				if (tokens.size() < 1){
+				}
+				else if (tokens.size() > 1 && tokens.get(1).equals("=")){
 					if(!variables.containsKey(tokens.get(0))){
 						if(tokens.get(2).equals("run")){
 							ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(3, tokens.size()));
@@ -51,13 +54,15 @@ public class Console {
 				else if (tokens.size() > 1 && tokens.get(0).equals("run")){
 					ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(1, tokens.size()));
 					Expression exp = parser.parse(newTokens);
-					HashMap<String, ArrayList<Variable>> satwikalist = getVariables(exp);
+
+					// later - it does not need to be in a variable but it still needs to be called
+					getVariables(exp);
 					Expression subbed = substitute(exp);
 					System.out.println(subbed);
 
-					System.out.println("Parameters: " + satwikalist.get("parameter").toString());
-					System.out.println("Bound: " + satwikalist.get("bound").toString());
-					System.out.println("Free: " + satwikalist.get("free").toString());
+					// System.out.println("Parameters: " + satwikalist.get("parameter").toString());
+					// System.out.println("Bound: " + satwikalist.get("bound").toString());
+					// System.out.println("Free: " + satwikalist.get("free").toString());
 
 				}
 				else {
@@ -81,8 +86,10 @@ public class Console {
 		if (original instanceof Application){
 			Expression left  = ((Application)original).getLeft();
 			Expression right = ((Application)original).getRight();
-			if (((Application)original).getLeft() instanceof Function){
-				System.out.println("Subbing");
+			
+			alphaReduce(left, right);			
+			
+			if (left instanceof Function){
 				Function f = (Function)left;
 				left = substituteRunner(f.getExpression(), right, f.getVariable());
 				return substitute(left);
@@ -120,15 +127,82 @@ public class Console {
 		}
 	}
 
+	
+	public static void alphaReduce(Expression left, Expression right){
+		ArrayList<Variable> leftParams = getVariables(left).get("parameter");
+		ArrayList<Variable> rightVariables = getVariables(right).get("free");
+		rightVariables.addAll(getVariables(right).get("parameter"));
+				
+		for (int i = 0; i < leftParams.size(); i++){
+			Variable leftParam = leftParams.get(i);
+			ParameterVariable param = ((ParameterVariable)leftParam);
+
+			boolean rightContainsParam = false;
+			for(int j = 0; j < rightVariables.size(); j++){
+
+				if(rightVariables.get(j).name.equals(param.name)){
+					rightContainsParam = true;
+					break;
+				}
+			}
+			if (rightContainsParam){
+				rename(param);
+
+			}
+		
+		
+		
+		
+		}
+
+	}
+
+	public static boolean addToNames(ArrayList<Variable> vars){
+		for(int i = 0; i < vars.size(); i++){
+			if (!(variableNames.contains(vars.get(i).name))){
+				variableNames.add(vars.get(i).name);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static String rename(Variable var){
+		if(!(variableNames.contains(var.name))){
+			return var.name;
+		}
+		
+		int count = 2; 
+		while(variableNames.contains(var.name + String.valueOf(count))){
+			count++;
+
+		}
+
+		String name = var + String.valueOf(count);
+		variableNames.add(name);
+		var.setName(name);	
+
+		if (var instanceof ParameterVariable){
+			ParameterVariable param = (ParameterVariable)var;
+			// goes through all bound variables
+			ArrayList<BoundVariable> boundVars = param.getBoundVars();
+			for(int j = 0; j < boundVars.size(); j++){
+				// changes name to match param variable
+				boundVars.get(j).setName(param.name);
+			}	
+		}	
+		return name;
+
+	}
+	
+
 	private static HashMap<String, ArrayList<Variable>> getVariables(Expression exp){
 		return getVariables(exp, new ArrayList<Variable>(), new ArrayList<Variable>(), new ArrayList<Variable>());
 	}
 
 	private static HashMap<String, ArrayList<Variable>> getVariables(Expression exp, ArrayList<Variable> fVariables, ArrayList<Variable> pVariables, ArrayList<Variable> bVariables){
 		HashMap<String, ArrayList<Variable>> a = new HashMap<String, ArrayList<Variable>>();
-
 		if (exp instanceof Variable){
-			System.out.println("HELLLOOOOOOOOOOOO");
 			if (exp instanceof FreeVariable){
 				fVariables.add((FreeVariable)exp);
 			}
@@ -141,6 +215,9 @@ public class Console {
 			a.put("free", fVariables);
 			a.put("parameter", pVariables);
 			a.put("bound", bVariables);
+			addToNames(fVariables);
+			addToNames(pVariables);
+			
 			return a;
 		}
 

@@ -102,7 +102,6 @@ public class Parser {
 						// CREATE A PARAMETER VARIABLE
 
 
-						//System.out.println("Parameter variable " + params.get(0));
 						ParameterVariable param = new ParameterVariable(params.get(0));
 						// add parameter variable to the list
 						paramVariables.add(param);
@@ -141,21 +140,26 @@ public class Parser {
 	}
 
 	public Variable returnVariableType(ArrayList<ParameterVariable> paramVariables, String variable){
-		
-		boolean contains = false;
+		// parameter variables are instantiated from bound or free variables
 
+		boolean contains = false;
+		ParameterVariable param = new ParameterVariable(null); // blank
+
+		// bound variable 
 		for(int i = 0; i < paramVariables.size(); i++){
 			if(variable.equals(paramVariables.get(i).name)){
 				contains = true;
+				param = paramVariables.get(i);
 				break;
 			}
 		}
 		if(contains){
-			//System.out.println("Bound variable: " + variable);
-			return new BoundVariable(variable);
+			BoundVariable b = new BoundVariable(variable);
+			param.getBoundVars().add(b);
+			return b;
 		} 
 
-		//System.out.println("Free variable: " + variable);
+		// free variables
 		return new FreeVariable(variable);
 
 	}

@@ -10,10 +10,12 @@ public class Variable implements Expression {
 		return name;
 	}
 
-	
-	public boolean equals(Variable variable){
-		return variable.toString().equals(this.toString());
+	public void setName(String newName){
+        this.name = newName;
+    }
 
+	public boolean equals(Variable variable){
+		return (variable.toString()).equals(this.toString());
 	}
 
 }
