@@ -134,7 +134,8 @@ public class Console {
 			Application a = (Application) exp;
 			a = alphaReduce(a.getLeft(), a.getRight());
 			if (a.getLeft() instanceof Function){
-				ret =  substituteRunner(((Function)a.getLeft()).getExpression(), a.getRight(),((Function)(a.getLeft())).getVariable());
+				Function f = (Function)(a.getLeft());
+				ret =  substituteRunner(f.getExpression(), a.getRight(), f.getVariable());
 				return substitute(ret);
 			}
 			else{
