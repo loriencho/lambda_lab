@@ -39,13 +39,17 @@ public class Console {
 						if(tokens.get(2).equals("run")){
 							newTokens = new ArrayList<String>(tokens.subList(3, tokens.size()));
 							variables.put(tokens.get(0), newTokens);
+							exp = parser.parse(newTokens);
+							getVariables(exp);
+							exp = substitute(exp);
+
 						}
 						else{
 							newTokens = new ArrayList<String>(tokens.subList(2, tokens.size()));
+							exp = parser.parse(newTokens);
 							variables.put(tokens.get(0), newTokens);
 						}
 
-						exp = parser.parse(newTokens);
 						System.out.println("Added " + exp +" as " + tokens.get(0));
 					}
 					else {
@@ -59,25 +63,19 @@ public class Console {
 					System.out.println(newTokens.toString());
 					Expression exp = parser.parse(newTokens);
 
-					System.out.println("Returned from parsing in run case. Exp: " + exp + "Exp class: " + exp.getClass().getName() );
-					if (exp instanceof Application){
-						System.out.println("Casts to application. Left: " + ((Application)exp).getLeft() + "Left class: " + ((Application)exp).getLeft().getClass().getName());
-						System.out.println("Casts to application. Right: " + ((Application)exp).getRight() + "RIght class: " + ((Application)exp).getRight().getClass().getName());
+					// System.out.println("Returned from parsing in run case. Exp: " + exp + "Exp class: " + exp.getClass().getName() );
+					// if (exp instanceof Application){
+					// 	System.out.println("Casts to application. Left: " + ((Application)exp).getLeft() + "Left class: " + ((Application)exp).getLeft().getClass().getName());
+					// 	System.out.println("Casts to application. Right: " + ((Application)exp).getRight() + "RIght class: " + ((Application)exp).getRight().getClass().getName());
 
-					}
+					// }
 
 
 					// later - it does not need to be in a variable but it still needs to be called
 					getVariables(exp);
 					Expression subbed = substitute(exp);
-					
-					if(subbed instanceof Application){
-						System.out.println("app");
-					}
-					else if(subbed instanceof Function){
-						System.out.println("func");
-					}
-					
+				
+			
 					System.out.println(subbed);
 
 					// System.out.println("Parameters: " + satwikalist.get("parameter").toString());
@@ -130,38 +128,43 @@ public class Console {
 	}
 	*/
 
-	private static Expression substitute(Expression original){
-		Expression exp = deepCopy(original); 
-		if(original instanceof Application){
-			Application a = (Application) original;
-			
-			if (a.getLeft() instanceof Function ){
-				Function f = (Function) a.getLeft();
-
-				if (a.getRight() instanceof Variable){ 
-					substituteRunner(a.getLeft(), a.getRight(), f.getVariable());
-				}
-				/*
-				 we need to also run substitute runner when the right expression
-				 is fully simplified -- but what does that mean??
-				 */
-				else {
-					return new Function(f.getVariable(), substitute(a.getRight()));
-				}
-			}
-			// prioritize left before right
-			else if(a.getLeft() instanceof Application){
-				Application a = a.getLe
-				substitute 
+	private static Expression substitute(Expression exp){
+		Expression ret;
+		if(exp instanceof Application){
+			Application a = (Application) exp;
+			a = alphaReduce(a.getLeft(), a.getRight());
+			if (a.getLeft() instanceof Function){
+				ret =  substituteRunner(((Function)a.getLeft()).getExpression(), a.getRight(),((Function)(a.getLeft())).getVariable());
+				return substitute(ret);
 			}
 			else{
-				return original;
-			}
+				Expression newExp = new Application(substitute(a.getLeft()), substitute(a.getRight()));
+
+				while(newExp instanceof Application
+				&& ((Application)newExp).getLeft() instanceof Function 
+				&& ((Application)newExp).getRight() instanceof Variable){
+					newExp = substitute(newExp);
+
+				}
+
+				return newExp;
+			}	
 		}
-
-
+		else if (exp instanceof Function){
+			Function f = (Function)exp;
+			ret = new Function(f.getVariable(), substitute(f.getExpression()));
+			return ret;
+		}
+		else{
+			return exp;
+		}
 	}
 
+
+
+	
+
+	// only substitutes for one function at a time
 	private static Expression substituteRunner(Expression exp, Expression sub, Variable bound){
 		if (exp instanceof Application){
 			Application app = (Application)exp;
@@ -169,7 +172,15 @@ public class Console {
 		}
 		else if (exp instanceof Function){
 			Function f  = (Function)exp;
-			if (!f.getVariable().equals(bound)){
+			System.out.println("Sub runner function"+  f);;
+
+			System.out.println("Sub runner bound "+  bound);;
+
+			System.out.println("Sub runner f var "+  f.getVariable());;
+			if (!((f.getVariable().name).equals(bound.name))){
+				System.out.println("Subbing in a fucntion");
+				Function ret = new Function(f.getVariable(), substituteRunner(f.getExpression(), sub, bound));
+				System.out.println(ret);
 				return new Function(f.getVariable(), substituteRunner(f.getExpression(), sub, bound));
 			}
 			else 
@@ -255,7 +266,6 @@ public class Console {
 		HashMap<String, ArrayList<Variable>> a = new HashMap<String, ArrayList<Variable>>();
 		if (exp instanceof Variable){
 			if (exp instanceof FreeVariable){
-				System.out.println("This is  exp: " +exp +"and this is its class " + exp.getClass().getName());
 
 				fVariables.add((FreeVariable)exp);
 			}
