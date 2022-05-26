@@ -29,6 +29,7 @@ public class Console {
 			
 			try {
 
+				variableNames = new ArrayList<String>();
 				// setting a variable
 				if (tokens.size() < 1){
 				}
@@ -41,9 +42,8 @@ public class Console {
 							variables.put(tokens.get(0), newTokens);
 							exp = parser.parse(newTokens);
 							getVariables(exp);
-							// exp = substitute(exp); IS EXP BEING CHANGED?
-							substitute(exp);
-
+							exp = substitute(exp);
+							
 						}
 						else{
 							newTokens = new ArrayList<String>(tokens.subList(2, tokens.size()));
@@ -74,13 +74,9 @@ public class Console {
 
 					// later - it does not need to be in a variable but it still needs to be called
 					getVariables(exp);
-					//Expression subbed = substitute(exp);
-					substitute(exp);
-
-					// make sure it is being changed~!!!!!!!!!!
-				
+					Expression subbed = substitute(exp);
 			
-					System.out.println(exp);
+					System.out.println(subbed);
 
 					// System.out.println("Parameters: " + satwikalist.get("parameter").toString());
 					// System.out.println("Bound: " + satwikalist.get("bound").toString());
@@ -134,29 +130,24 @@ public class Console {
 
 */
 
-	private static void substitute(Expression original){
-
+	private static Expression substitute(Expression original){
 
 		ArrayList<String> redexPath = findRedexPath(original);
 
 		if(redexPath == null){
-			System.out.println("redexPath: not found");
-
-			return;
+			return original;
 		}
-		System.out.println("redexPath: " + redexPath.toString());
-
-		Application redex = getRedex(redexPath, original); // Application with a function on the left
-		System.out.println("redex: " + redex);
 		
 		while (!(redexPath == null)){
+			Application redex = getRedex(new ArrayList<String>(redexPath), original); 
+			redex = alphaReduce(redex.getLeft(), redex.getRight());
 			Function f = ((Function) (redex.getLeft()));
-			System.out.println("Before replace: " + original);
-			replace(redexPath, substituteRunner(f, redex.getRight(), f.getVariable()), original);
-			System.out.println("After replace: " + original);
+			original = replace(new ArrayList<String>(redexPath), substituteRunner(f, redex.getRight()), original);
 
 			redexPath = findRedexPath(original);
+
 		}
+		return original;
 
 	}
 	
@@ -166,6 +157,7 @@ public class Console {
 	
 
 	private static ArrayList<String> findRedexPath(Expression exp, ArrayList<String> path){
+		path = new ArrayList<String>(path);
 		if(exp instanceof Variable){
 			return null;
 		}
@@ -183,14 +175,16 @@ public class Console {
 				
 			path.add("left");
 			ArrayList<String> left = findRedexPath(a.getLeft(), path);
-			
 			// Successfully found redex
-			if (!(left == null))
-				return left;
+			if (!(left == null)){
+
+				return left;}
 			else {
 				//remove the 'left', replace with 'right'
+
 				path.remove(path.size()-1);
 				path.add("right");
+
 				return findRedexPath(a.getRight(), path);
 
 			}
@@ -201,7 +195,6 @@ public class Console {
 
 	private static Application getRedex(ArrayList<String> path, Expression current){
 		//get redex given the path 
-		
 		if(path.size() == 0){
 			return (Application)(current);
 		}
@@ -222,64 +215,72 @@ public class Console {
 	}
 
 	private static Expression replace(ArrayList<String> path, Expression newExpression, Expression current){
-		System.out.println("IN REPLACE");
-		System.out.println(path.toString());
 		if (path.size() == 0){
 			return newExpression;
+
 		}
 		else if(path.size() == 1){
-			System.out.println("here");
+
 			if (current instanceof Application){
 				Application a = (Application) current;
 
 				if (path.get(0).equals("right")){
-					a.setRight(newExpression);
+					return new Application(a.getLeft(), newExpression);
 				}
 				else{
-					a.setLeft(newExpression);
+					return new Application(newExpression, a.getRight());
 				}
 			}
 			else { // current is a function
-				Function f = (Function) current;
-				f.setExpression(newExpression);
+				if (current instanceof Function){
+					Function f = (Function) current;
+					return new Function(f.getVariable(), newExpression);					
+				}
+
+				// variable
+				else{
+					
+					return newExpression;
+				}
 			}
 
 		}
 		else if(path.get(0).equals("right")){
 			path.remove(0);
 			if(current instanceof Function){
-				return replace(path, ((Function)current).getExpression(), newExpression);
+				Function f = (Function) current;
+				return new Function(f.getVariable(), replace(path, newExpression, f.getExpression()));
+				
 			}
-			else{
-				return replace(path, ((Application)current).getRight(), newExpression);
+			else {
+				Application a = (Application) current;
+				return new Application(a.getLeft(), replace(path, newExpression, a.getRight()));
 			}
 		}
-		else{
+		else { // left - has to be an application
 			path.remove(0);
-			return replace(path, ((Application)current).getLeft(), newExpression);
+			Application a = (Application) current;
+			return new Application(replace(path, newExpression, a.getLeft()), a.getRight());
 		}
 	}
 
-	
+	private static Expression substituteRunner(Function exp, Expression sub){
+		return substituteRunner(exp.getExpression(), deepCopy(sub), exp.getVariable());
+	}
 
 	// only substitutes for one function at a time
 	private static Expression substituteRunner(Expression exp, Expression sub, Variable bound){
+		sub = deepCopy(sub);
 		if (exp instanceof Application){
 			Application app = (Application)exp;
 			return new Application(substituteRunner(app.getLeft(), sub, bound), substituteRunner(app.getRight(), sub, bound));
 		}
 		else if (exp instanceof Function){
 			Function f  = (Function)exp;
-			System.out.println("Sub runner function"+  f);;
 
-			System.out.println("Sub runner bound "+  bound);;
-
-			System.out.println("Sub runner f var "+  f.getVariable());;
 			if (!((f.getVariable().name).equals(bound.name))){
-				System.out.println("Subbing in a fucntion");
 				Function ret = new Function(f.getVariable(), substituteRunner(f.getExpression(), sub, bound));
-				System.out.println(ret);
-				return new Function(f.getVariable(), substituteRunner(f.getExpression(), sub, bound));
+				return ret;
 			}
 			else 
 				return f;
@@ -287,11 +288,10 @@ public class Console {
 		else{
 			// Variable case
 			Variable var = (Variable)exp;
-			if (var.equals(bound))
+			if ((var.name).equals(bound.name))
 				return deepCopy(sub);
 			else 
 				return var;
-
 		}
 	}
 
