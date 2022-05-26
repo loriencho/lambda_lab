@@ -31,6 +31,11 @@ public class Function implements Expression {
         }
         return false;
     }
+
+    public Expression setExpression(Expression exp){
+        this.exp = exp;
+        return exp;
+    }
 }
 
 /*

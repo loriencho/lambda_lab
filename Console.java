@@ -41,7 +41,8 @@ public class Console {
 							variables.put(tokens.get(0), newTokens);
 							exp = parser.parse(newTokens);
 							getVariables(exp);
-							exp = substitute(exp);
+							// exp = substitute(exp); IS EXP BEING CHANGED?
+							substitute(exp);
 
 						}
 						else{
@@ -73,10 +74,13 @@ public class Console {
 
 					// later - it does not need to be in a variable but it still needs to be called
 					getVariables(exp);
-					Expression subbed = substitute(exp);
+					//Expression subbed = substitute(exp);
+					substitute(exp);
+
+					// make sure it is being changed~!!!!!!!!!!
 				
 			
-					System.out.println(subbed);
+					System.out.println(exp);
 
 					// System.out.println("Parameters: " + satwikalist.get("parameter").toString());
 					// System.out.println("Bound: " + satwikalist.get("bound").toString());
@@ -99,13 +103,14 @@ public class Console {
 		}
 		System.out.println("Goodbye!");
 	}
+	
 	/*
 	private static Expression substitute(Expression original){
 		
 		if (original instanceof Application){
 			Expression left  = ((Application)original).getLeft();
 			Expression right = ((Application)original).getRight();
-			original = alphaReduce(left, right);			
+			//original = alphaReduce(left, right);			
 
 			if (left instanceof Function){
 				Function f = (Function)left;
@@ -126,42 +131,134 @@ public class Console {
 		}
 		
 	}
-	*/
 
-	private static Expression substitute(Expression exp){
-		Expression ret;
-		if(exp instanceof Application){
-			Application a = (Application) exp;
-			a = alphaReduce(a.getLeft(), a.getRight());
-			if (a.getLeft() instanceof Function){
-				Function f = (Function)(a.getLeft());
-				ret =  substituteRunner(f.getExpression(), a.getRight(), f.getVariable());
-				return substitute(ret);
-			}
-			else{
-				Expression newExp = new Application(substitute(a.getLeft()), substitute(a.getRight()));
+*/
 
-				while(newExp instanceof Application
-				&& ((Application)newExp).getLeft() instanceof Function 
-				&& ((Application)newExp).getRight() instanceof Variable){
-					newExp = substitute(newExp);
+	private static void substitute(Expression original){
 
-				}
 
-				return newExp;
-			}	
+		ArrayList<String> redexPath = findRedexPath(original);
+
+		if(redexPath == null){
+			System.out.println("redexPath: not found");
+
+			return;
+		}
+		System.out.println("redexPath: " + redexPath.toString());
+
+		Application redex = getRedex(redexPath, original); // Application with a function on the left
+		System.out.println("redex: " + redex);
+		
+		while (!(redexPath == null)){
+			Function f = ((Function) (redex.getLeft()));
+			System.out.println("Before replace: " + original);
+			replace(redexPath, substituteRunner(f, redex.getRight(), f.getVariable()), original);
+			System.out.println("After replace: " + original);
+
+			redexPath = findRedexPath(original);
+		}
+
+	}
+	
+	private static ArrayList<String> findRedexPath(Expression exp){
+		return findRedexPath(exp, new ArrayList<String>());
+	}
+	
+
+	private static ArrayList<String> findRedexPath(Expression exp, ArrayList<String> path){
+		if(exp instanceof Variable){
+			return null;
 		}
 		else if (exp instanceof Function){
-			Function f = (Function)exp;
-			ret = new Function(f.getVariable(), substitute(f.getExpression()));
-			return ret;
+			path.add("right");
+			return findRedexPath(((Function)exp).getExpression(), path);
 		}
-		else{
-			return exp;
+		else{ // Application
+			Application a = (Application)exp;
+
+			// Found redex!!
+			if (a.getLeft() instanceof Function){
+				return path;
+			}
+				
+			path.add("left");
+			ArrayList<String> left = findRedexPath(a.getLeft(), path);
+			
+			// Successfully found redex
+			if (!(left == null))
+				return left;
+			else {
+				//remove the 'left', replace with 'right'
+				path.remove(path.size()-1);
+				path.add("right");
+				return findRedexPath(a.getRight(), path);
+
+			}
+			
 		}
+		
 	}
 
+	private static Application getRedex(ArrayList<String> path, Expression current){
+		//get redex given the path 
+		
+		if(path.size() == 0){
+			return (Application)(current);
+		}
 
+		else if (path.get(0).equals("right")){
+			path.remove(0);
+			if (current instanceof Function){
+				return getRedex(path,((Function)current).getExpression());
+			}
+			else // Application
+				return getRedex(path, ((Application)current).getRight());
+		}
+		else{ 
+			path.remove(0);
+			return getRedex(path, ((Application)current).getLeft());
+		}
+
+	}
+
+	private static Expression replace(ArrayList<String> path, Expression newExpression, Expression current){
+		System.out.println("IN REPLACE");
+		System.out.println(path.toString());
+		if (path.size() == 0){
+			return newExpression;
+		}
+		else if(path.size() == 1){
+			System.out.println("here");
+			if (current instanceof Application){
+				Application a = (Application) current;
+
+				if (path.get(0).equals("right")){
+					a.setRight(newExpression);
+				}
+				else{
+					a.setLeft(newExpression);
+				}
+			}
+			else { // current is a function
+				Function f = (Function) current;
+				f.setExpression(newExpression);
+			}
+
+		}
+		else if(path.get(0).equals("right")){
+			path.remove(0);
+			if(current instanceof Function){
+				return replace(path, ((Function)current).getExpression(), newExpression);
+			}
+			else{
+				return replace(path, ((Application)current).getRight(), newExpression);
+			}
+		}
+		else{
+			path.remove(0);
+			return replace(path, ((Application)current).getLeft(), newExpression);
+		}
+	}
 
 	
 

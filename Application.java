@@ -16,6 +16,15 @@ public class Application implements Expression {
         return right; 
     }
 
+    public Expression setLeft(Expression newLeft){
+        this.left = newLeft;
+        return left;
+    }
+
+    public Expression setRight(Expression newRight){
+        this.right = newRight;
+        return right; 
+    }
     public String toString(){
         return ("(" + left.toString() + " " + right.toString() + ")");
     }
