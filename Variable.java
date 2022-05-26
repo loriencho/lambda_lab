@@ -1,5 +1,5 @@
 
-public class Variable implements Expression {
+public abstract class Variable implements Expression {
 	protected String name;
 	
 	public Variable(String name) {

@@ -13,11 +13,35 @@ public class Parser {
 	public Expression parse(ArrayList<String> tokens) throws ParseException{
 		int openCounter = 0;
 		int closeCounter = 0;
-		
 		for (int i = 0; i < tokens.size(); i++){
 			// Variable code
 			if (Console.variables.containsKey(tokens.get(i))){
-				tokens.set(i, Console.variables.get(tokens.get(i)).toString());
+				// insert substituted tokens inside existing tokens
+				ArrayList<String> newTokens = new ArrayList<String>();
+				int j = 0;
+
+				// copy tokens before var
+				while (j < i){
+					newTokens.add(tokens.get(j));
+					j++;
+				}
+				j+=1;
+
+				// subsitute tokens that correspond to var
+				newTokens.add("(");
+				ArrayList<String> sub =  Console.variables.get(tokens.get(i));
+				for(int k = 0; k < sub.size(); k++){
+					newTokens.add(sub.get(k));
+				}
+				newTokens.add(")");
+
+				// copy tokens after variable
+				while(j < tokens.size()){
+					newTokens.add(tokens.get(j));
+					j++;
+				}
+
+				tokens = newTokens;
 			}
 			// Paren balancing
 			if (tokens.get(i).equals(")"))

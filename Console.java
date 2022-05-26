@@ -9,10 +9,10 @@ import java.util.regex.Pattern;
 
 public class Console {
 	private static Scanner in;
-	public static HashMap<String, Expression> variables = new HashMap<String, Expression>();
+	public static HashMap<String, ArrayList<String>> variables = new HashMap<String, ArrayList<String>>();
 	public static ArrayList<String> variableNames = new ArrayList<String>();
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception{
 		in = new Scanner (System.in);
 		
 		Lexer lexer = new Lexer();
@@ -34,17 +34,19 @@ public class Console {
 				}
 				else if (tokens.size() > 1 && tokens.get(1).equals("=")){
 					if(!variables.containsKey(tokens.get(0))){
+						Expression exp;
+						ArrayList<String> newTokens;
 						if(tokens.get(2).equals("run")){
-							ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(3, tokens.size()));
-							Expression exp = parser.parse(newTokens);
-							Expression subbed = substitute(exp);
-							variables.put(tokens.get(0), subbed);
+							newTokens = new ArrayList<String>(tokens.subList(3, tokens.size()));
+							variables.put(tokens.get(0), newTokens);
 						}
 						else{
-							ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(2, tokens.size()));
-							variables.put(tokens.get(0), parser.parse(newTokens));
+							newTokens = new ArrayList<String>(tokens.subList(2, tokens.size()));
+							variables.put(tokens.get(0), newTokens);
 						}
-						System.out.println("Added " + variables.get(tokens.get(0)) +" as " + tokens.get(0));
+
+						exp = parser.parse(newTokens);
+						System.out.println("Added " + exp +" as " + tokens.get(0));
 					}
 					else {
 						System.out.println(tokens.get(0) + " is already defined.");
@@ -53,11 +55,14 @@ public class Console {
 				// run!!
 				else if (tokens.size() > 1 && tokens.get(0).equals("run")){
 					ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(1, tokens.size()));
+
+					System.out.println(newTokens.toString());
 					Expression exp = parser.parse(newTokens);
 
-					System.out.println("Returned from parsing after run. Exp: " + exp + "Exp class: " + exp.getClass().getName() );
+					System.out.println("Returned from parsing in run case. Exp: " + exp + "Exp class: " + exp.getClass().getName() );
 					if (exp instanceof Application){
 						System.out.println("Casts to application. Left: " + ((Application)exp).getLeft() + "Left class: " + ((Application)exp).getLeft().getClass().getName());
+						System.out.println("Casts to application. Right: " + ((Application)exp).getRight() + "RIght class: " + ((Application)exp).getRight().getClass().getName());
 
 					}
 
@@ -65,6 +70,14 @@ public class Console {
 					// later - it does not need to be in a variable but it still needs to be called
 					getVariables(exp);
 					Expression subbed = substitute(exp);
+					
+					if(subbed instanceof Application){
+						System.out.println("app");
+					}
+					else if(subbed instanceof Function){
+						System.out.println("func");
+					}
+					
 					System.out.println(subbed);
 
 					// System.out.println("Parameters: " + satwikalist.get("parameter").toString());
@@ -77,19 +90,20 @@ public class Console {
 					System.out.println(exp.toString());
 
 				}
-			} catch (Exception e) {
-				System.out.println("Unparsable expression, input was: \"" + input + "\"");
-				input = cleanConsoleInput();
-				continue;
-			}
+			 } catch (Exception e) {
+				 throw(e);
+			 	// System.out.println("Unparsable expression, input was: \"" + input + "\"");
+			 	// input = cleanConsoleInput();
+			 	// continue;
+			 }
 						
 			input = cleanConsoleInput();
 		}
 		System.out.println("Goodbye!");
 	}
+	/*
 	private static Expression substitute(Expression original){
-		System.out.println("Sub gets run");
-
+		
 		if (original instanceof Application){
 			Expression left  = ((Application)original).getLeft();
 			Expression right = ((Application)original).getRight();
@@ -104,9 +118,48 @@ public class Console {
 				return new Application(substitute(left), substitute(right));
 			}
 		}
+		else if (original instanceof Function){
+			System.out.println("Function within substitute: parameter is " + ((Function)original).getVariable());
+			Function f = (Function) original;
+			return new Function(f.getVariable(), substitute(f.getExpression())); // for now
+		}
 		else {
 			return original;
 		}
+		
+	}
+	*/
+
+	private static Expression substitute(Expression original){
+		Expression exp = deepCopy(original); 
+		if(original instanceof Application){
+			Application a = (Application) original;
+			
+			if (a.getLeft() instanceof Function ){
+				Function f = (Function) a.getLeft();
+
+				if (a.getRight() instanceof Variable){ 
+					substituteRunner(a.getLeft(), a.getRight(), f.getVariable());
+				}
+				/*
+				 we need to also run substitute runner when the right expression
+				 is fully simplified -- but what does that mean??
+				 */
+				else {
+					return new Function(f.getVariable(), substitute(a.getRight()));
+				}
+			}
+			// prioritize left before right
+			else if(a.getLeft() instanceof Application){
+				Application a = a.getLe
+				substitute 
+			}
+			else{
+				return original;
+			}
+		}
+
+
 	}
 
 	private static Expression substituteRunner(Expression exp, Expression sub, Variable bound){
@@ -170,7 +223,7 @@ public class Console {
 			return var.name;
 		}
 		
-		int count = 2; 
+		int count = 1; 
 		while(variableNames.contains(var.name + String.valueOf(count))){
 			count++;
 
@@ -210,6 +263,7 @@ public class Console {
 				pVariables.add((ParameterVariable)exp);
 			}
 			else{
+
 				bVariables.add((BoundVariable)exp);
 			}
 			a.put("free", fVariables);
@@ -265,8 +319,26 @@ public class Console {
 	 */
 	
 	private static Expression deepCopy(Expression exp){
-		if(exp instanceof Variable){
-			return new Variable(exp.toString());
+		if(exp instanceof ParameterVariable){
+
+			ArrayList<BoundVariable> bv = ((ParameterVariable) exp).getBoundVars();
+			ArrayList<BoundVariable> copy = new ArrayList<BoundVariable>();
+
+
+			for(int i = 0; i < bv.size(); i++){
+				copy.add(bv.get(i));
+			}
+			return new ParameterVariable(exp.toString(), copy);
+
+		}
+		else if(exp instanceof FreeVariable){
+
+			return new FreeVariable(exp.toString());
+
+		}
+		else if(exp instanceof BoundVariable){
+			return new BoundVariable(exp.toString());
+
 		}
 		else if(exp instanceof Function){
 			Function f = (Function)exp;
