@@ -39,11 +39,10 @@ public class Console {
 						ArrayList<String> newTokens;
 						if(tokens.get(2).equals("run")){
 							newTokens = new ArrayList<String>(tokens.subList(3, tokens.size()));
-							variables.put(tokens.get(0), newTokens);
 							exp = parser.parse(newTokens);
 							getVariables(exp);
 							exp = substitute(exp);
-							
+							variables.put(tokens.get(0), lexer.tokenize(exp.toString()));
 						}
 						else{
 							newTokens = new ArrayList<String>(tokens.subList(2, tokens.size()));
@@ -61,26 +60,13 @@ public class Console {
 				else if (tokens.size() > 1 && tokens.get(0).equals("run")){
 					ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(1, tokens.size()));
 
-					System.out.println(newTokens.toString());
 					Expression exp = parser.parse(newTokens);
-
-					// System.out.println("Returned from parsing in run case. Exp: " + exp + "Exp class: " + exp.getClass().getName() );
-					// if (exp instanceof Application){
-					// 	System.out.println("Casts to application. Left: " + ((Application)exp).getLeft() + "Left class: " + ((Application)exp).getLeft().getClass().getName());
-					// 	System.out.println("Casts to application. Right: " + ((Application)exp).getRight() + "RIght class: " + ((Application)exp).getRight().getClass().getName());
-
-					// }
-
 
 					// later - it does not need to be in a variable but it still needs to be called
 					getVariables(exp);
 					Expression subbed = substitute(exp);
 			
 					System.out.println(subbed);
-
-					// System.out.println("Parameters: " + satwikalist.get("parameter").toString());
-					// System.out.println("Bound: " + satwikalist.get("bound").toString());
-					// System.out.println("Free: " + satwikalist.get("free").toString());
 
 				}
 				else {
@@ -99,36 +85,6 @@ public class Console {
 		}
 		System.out.println("Goodbye!");
 	}
-	
-	/*
-	private static Expression substitute(Expression original){
-		
-		if (original instanceof Application){
-			Expression left  = ((Application)original).getLeft();
-			Expression right = ((Application)original).getRight();
-			//original = alphaReduce(left, right);			
-
-			if (left instanceof Function){
-				Function f = (Function)left;
-				left = substituteRunner(f.getExpression(), right, f.getVariable());
-				return substitute(left);
-			}
-			else {
-				return new Application(substitute(left), substitute(right));
-			}
-		}
-		else if (original instanceof Function){
-			System.out.println("Function within substitute: parameter is " + ((Function)original).getVariable());
-			Function f = (Function) original;
-			return new Function(f.getVariable(), substitute(f.getExpression())); // for now
-		}
-		else {
-			return original;
-		}
-		
-	}
-
-*/
 
 	private static Expression substitute(Expression original){
 
@@ -141,6 +97,7 @@ public class Console {
 		while (!(redexPath == null)){
 			Application redex = getRedex(new ArrayList<String>(redexPath), original); 
 			redex = alphaReduce(redex.getLeft(), redex.getRight());
+
 			Function f = ((Function) (redex.getLeft()));
 			original = replace(new ArrayList<String>(redexPath), substituteRunner(f, redex.getRight()), original);
 
@@ -304,8 +261,6 @@ public class Console {
 		for (int i = 0; i < leftParams.size(); i++){
 			Variable leftParam = leftParams.get(i);
 			ParameterVariable param = ((ParameterVariable)leftParam);
-
-
 			for(int j = 0; j < rightVariables.size(); j++){
 				if(rightVariables.get(j).name.equals(param.name)){
 					rename(param);
@@ -313,7 +268,8 @@ public class Console {
 				}
 			}
 		}
-
+		Application ret= new Application(left, right);
+		
 		return new Application(left, right);
 	}
 
@@ -348,7 +304,7 @@ public class Console {
 			ArrayList<BoundVariable> boundVars = param.getBoundVars();
 			for(int j = 0; j < boundVars.size(); j++){
 				// changes name to match param variable
-				boundVars.get(j).setName(param.name);
+				param.getBoundVars().get(j).setName(param.name);
 			}	
 		}	
 		return name;
@@ -417,26 +373,17 @@ public class Console {
 		
 	}
 
-	
-	/*
-	 * Collects user input, and ...
-	 * ... does a bit of raw string processing to (1) strip away comments,  
-	 * (2) remove the BOM character that appears in unicode strings in Windows,
-	 * (3) turn all weird whitespace characters into spaces,
-	 * and (4) replace all backslashes with λ.
-	 */
-	
 	private static Expression deepCopy(Expression exp){
+		return deepCopy(exp, new ArrayList<Variable>());
+	}
+		
+	  
+	private static Expression deepCopy(Expression exp, ArrayList<Variable> paramVariables){
 		if(exp instanceof ParameterVariable){
 
-			ArrayList<BoundVariable> bv = ((ParameterVariable) exp).getBoundVars();
-			ArrayList<BoundVariable> copy = new ArrayList<BoundVariable>();
-
-
-			for(int i = 0; i < bv.size(); i++){
-				copy.add(bv.get(i));
-			}
-			return new ParameterVariable(exp.toString(), copy);
+			ParameterVariable param =new ParameterVariable(exp.toString(), new ArrayList<BoundVariable>()); 
+			paramVariables.add(param);
+			return param;
 
 		}
 		else if(exp instanceof FreeVariable){
@@ -445,20 +392,35 @@ public class Console {
 
 		}
 		else if(exp instanceof BoundVariable){
-			return new BoundVariable(exp.toString());
+			BoundVariable var = new BoundVariable(exp.toString());;
+			for(int i = 0; i < paramVariables.size(); i++){
+				if(paramVariables.get(i).name.equals(exp.toString()))
+					((ParameterVariable)(paramVariables.get(i))).getBoundVars().add(var);
+			}
+			return var;
 
 		}
 		else if(exp instanceof Function){
 			Function f = (Function)exp;
-			return new Function((Variable) deepCopy(f.getVariable()), deepCopy(f.getExpression()));
+			return new Function((Variable)deepCopy(f.getVariable(), paramVariables), deepCopy(f.getExpression(), paramVariables));
 		}
 		else{ // is an application
 			Application app = (Application)exp;
-			return new Application(deepCopy(app.getLeft()), deepCopy(app.getRight()));
+			return new Application(deepCopy(app.getLeft(), paramVariables), deepCopy(app.getRight(), paramVariables));
 		}
 
 	}
-	  
+
+	
+	/*
+	 * Collects user input, and ...
+	 * ... does a bit of raw string processing to (1) strip away comments,  
+	 * (2) remove the BOM character that appears in unicode strings in Windows,
+	 * (3) turn all weird whitespace characters into spaces,
+	 * and (4) replace all backslashes with λ.
+	 */
+
+	 
 	private static String cleanConsoleInput() {
 		System.out.print("> ");
 		String raw = in.nextLine();
