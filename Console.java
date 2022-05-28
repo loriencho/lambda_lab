@@ -56,7 +56,25 @@ public class Console {
 						System.out.println(tokens.get(0) + " is already defined.");
 					}
 				}
-				// run!!
+				// to check equal only for testing purposes
+				else if(tokens.size() > 1 && tokens.get(0).equals("EQUAL?")){
+					ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(1, tokens.size()));
+					Expression exp = parser.parse(newTokens);
+					Expression exp2 = parser.parse(lexer.tokenize("\\f1. f1 x1"));
+
+					// later - it does not need to be in a variable but it still needs to be called
+					getVariables(exp);
+					Expression subbed = substitute(exp);
+
+					getVariables(exp2);
+					Expression subbed2 = substitute(exp2);
+			
+					System.out.println(subbed);
+					System.out.println(subbed2);
+					System.out.println(subbed.equals(subbed2));
+
+				}
+				//run!
 				else if (tokens.size() > 1 && tokens.get(0).equals("run")){
 					ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(1, tokens.size()));
 
