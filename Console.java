@@ -402,7 +402,7 @@ public class Console {
 		}
 		else if(exp instanceof Function){
 			Function f = (Function)exp;
-			return new Function((Variable)deepCopy(f.getVariable(), paramVariables), deepCopy(f.getExpression(), paramVariables));
+			return new Function((ParameterVariable)deepCopy(f.getVariable(), paramVariables), deepCopy(f.getExpression(), paramVariables));
 		}
 		else{ // is an application
 			Application app = (Application)exp;
