@@ -29,9 +29,12 @@ public class Application implements Expression {
         return ("(" + left.toString() + " " + right.toString() + ")");
     }
 
-    public Boolean equals(Application app){
-        if((app.getLeft().equals(this.getLeft())) && (app.getRight().equals(this.getRight()))){
-            return true;
+    public Boolean equals(Expression exp){
+        if(exp instanceof Application){
+            Application app = (Application) exp;
+            if((app.getLeft().equals(this.getLeft())) && (app.getRight().equals(this.getRight()))){
+                return true;
+            }
         }
         return false;
     }

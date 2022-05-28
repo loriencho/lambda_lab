@@ -15,7 +15,7 @@ public class Parser {
 		int closeCounter = 0;
 		for (int i = 0; i < tokens.size(); i++){
 			// Variable code
-			if (Console.variables.containsKey(tokens.get(i))){
+			if (Console.declaredVariables.containsKey(tokens.get(i))){
 				// insert substituted tokens inside existing tokens
 				ArrayList<String> newTokens = new ArrayList<String>();
 				int j = 0;
@@ -29,7 +29,7 @@ public class Parser {
 
 				// subsitute tokens that correspond to var
 				newTokens.add("(");
-				ArrayList<String> sub =  Console.variables.get(tokens.get(i));
+				ArrayList<String> sub =  Console.declaredVariables.get(tokens.get(i));
 				for(int k = 0; k < sub.size(); k++){
 					newTokens.add(sub.get(k));
 				}

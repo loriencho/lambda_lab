@@ -1,3 +1,4 @@
+import java.time.Year;
 import java.util.ArrayList;
 
 public class Function implements Expression {
@@ -25,11 +26,13 @@ public class Function implements Expression {
         return var;
     }
 
-    public Boolean equals(Function func){
+    public Boolean equals(Expression exp){
+
+        if (!exp.getClass().getName().equals("Function")) return false;
+
+        Function func = (Function) exp;
         if((func.getVariable().equals(this.getVariable()))){
-            if(func.getExpression().equals(this.getExpression()))
-                return true;
-            return false;
+            return (func.getExpression().equals(this.getExpression()));
         }
 
         ArrayList<Variable> pv1 = new ArrayList<Variable>();
@@ -37,7 +40,8 @@ public class Function implements Expression {
         pv1.add(this.getVariable());
         pv2.add(func.getVariable());
         
-        return equals(pv1, pv2, this.getExpression(), func.getExpression());        
+        return equals(pv1, pv2, this.getExpression(), func.getExpression());     
+
     }
 
      // to account for eta equivalency
@@ -49,7 +53,7 @@ public class Function implements Expression {
             // variables are bound 
             if((v1 instanceof BoundVariable) && (v2 instanceof BoundVariable)){
                 int index1 = -1;
-                int index2 = -2;
+                int index2 = -1;
 
                 //pv1 and pv2 are the same size
                 for(int i = 0; i < pv1.size(); i++){
@@ -60,10 +64,7 @@ public class Function implements Expression {
                         index2 = i;
                     }
                 } // find where in pv1 and pv2 v1 and v2 are
-
                 return index1 == index2;
-
-                
             }
             // free variables within the lambda function
             else if(v1.equals(v2)){

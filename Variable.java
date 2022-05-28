@@ -13,9 +13,9 @@ public abstract class Variable implements Expression {
 	public void setName(String newName){
         this.name = newName;
     }
-
-	public boolean equals(Variable variable){
-		return (variable.toString()).equals(this.toString());
+ 
+	public Boolean equals(Expression exp){
+		return (this.getClass().equals(exp.getClass())) && (exp.toString()).equals(this.toString());
 	}
 
 }

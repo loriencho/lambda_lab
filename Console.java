@@ -9,7 +9,9 @@ import java.util.regex.Pattern;
 
 public class Console {
 	private static Scanner in;
-	public static HashMap<String, ArrayList<String>> variables = new HashMap<String, ArrayList<String>>();
+	public static HashMap<String, ArrayList<String>> declaredVariables = new HashMap<String, ArrayList<String>>();
+	public static HashMap<Expression, String> expressionToVariables = new HashMap<Expression,String>();
+	public static ArrayList<Expression> variableExpressions = new ArrayList<Expression>();
 	public static ArrayList<String> variableNames = new ArrayList<String>();
 	
 	public static void main(String[] args) throws Exception{
@@ -21,7 +23,7 @@ public class Console {
 		String input = cleanConsoleInput();
 		
 		while (! input.equalsIgnoreCase("exit")) {
-			int len = variables.size();
+			int len = declaredVariables.size();
 			
 			ArrayList<String> tokens = lexer.tokenize(input);
 
@@ -34,7 +36,7 @@ public class Console {
 				if (tokens.size() < 1){
 				}
 				else if (tokens.size() > 1 && tokens.get(1).equals("=")){
-					if(!variables.containsKey(tokens.get(0))){
+					if(!declaredVariables.containsKey(tokens.get(0))){
 						Expression exp;
 						ArrayList<String> newTokens;
 						if(tokens.get(2).equals("run")){
@@ -42,38 +44,22 @@ public class Console {
 							exp = parser.parse(newTokens);
 							getVariables(exp);
 							exp = substitute(exp);
-							variables.put(tokens.get(0), lexer.tokenize(exp.toString()));
+							declaredVariables.put(tokens.get(0), lexer.tokenize(exp.toString()));
 						}
 						else{
 							newTokens = new ArrayList<String>(tokens.subList(2, tokens.size()));
 							exp = parser.parse(newTokens);
-							variables.put(tokens.get(0), newTokens);
+							declaredVariables.put(tokens.get(0), newTokens);
 						}
-
+						variableExpressions.add(exp);
+						expressionToVariables.put(exp, tokens.get(0));
 						System.out.println("Added " + exp +" as " + tokens.get(0));
 					}
 					else {
 						System.out.println(tokens.get(0) + " is already defined.");
 					}
 				}
-				// to check equal only for testing purposes
-				else if(tokens.size() > 1 && tokens.get(0).equals("EQUAL?")){
-					ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(1, tokens.size()));
-					Expression exp = parser.parse(newTokens);
-					Expression exp2 = parser.parse(lexer.tokenize("\\f1. f1 x1"));
-
-					// later - it does not need to be in a variable but it still needs to be called
-					getVariables(exp);
-					Expression subbed = substitute(exp);
-
-					getVariables(exp2);
-					Expression subbed2 = substitute(exp2);
-			
-					System.out.println(subbed);
-					System.out.println(subbed2);
-					System.out.println(subbed.equals(subbed2));
-
-				}
+				
 				//run!
 				else if (tokens.size() > 1 && tokens.get(0).equals("run")){
 					ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(1, tokens.size()));
@@ -83,8 +69,9 @@ public class Console {
 					// later - it does not need to be in a variable but it still needs to be called
 					getVariables(exp);
 					Expression subbed = substitute(exp);
+					Expression replaced = insertVariables(deepCopy(subbed));
 			
-					System.out.println(subbed);
+					System.out.println(replaced);
 
 				}
 				else {
@@ -102,6 +89,31 @@ public class Console {
 			input = cleanConsoleInput();
 		}
 		System.out.println("Goodbye!");
+	}
+
+	private static Expression insertVariables(Expression exp){
+
+		for(int i=0; i < variableExpressions.size(); i++){
+			Expression varExp = variableExpressions.get(i);
+			if (varExp.equals(exp)){
+				return new FreeVariable(expressionToVariables.get(varExp));
+			}
+		}
+		
+		if (exp instanceof Variable){
+			return exp;
+		}
+		
+		else if(exp instanceof Function){
+			Function f = (Function)exp;
+			return new Function(f.getVariable(), insertVariables(f.getExpression()));
+		}
+	
+		else { // application case 
+			Application a = (Application)exp;
+			return new Application(insertVariables(a.getLeft()), insertVariables(a.getRight()));			
+		}
+
 	}
 
 	private static Expression substitute(Expression original){
