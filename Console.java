@@ -1,4 +1,5 @@
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,6 +16,9 @@ public class Console {
 	public static ArrayList<String> variableNames = new ArrayList<String>();
 	
 	public static void main(String[] args) throws Exception{
+		PrintStream fileOut = new PrintStream("./out.txt");
+		System.setOut(fileOut);
+
 		in = new Scanner (System.in);
 		
 		Lexer lexer = new Lexer();
