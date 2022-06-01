@@ -7,6 +7,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 public class Console {
 	private static Scanner in;
 	public static HashMap<String, ArrayList<String>> declaredVariables = new HashMap<String, ArrayList<String>>();
@@ -15,8 +16,8 @@ public class Console {
 	public static ArrayList<String> variableNames = new ArrayList<String>();
 	
 	public static void main(String[] args) throws Exception{
-		// PrintStream fileOut = new PrintStream("./out.txt");
-		// System.setOut(fileOut);
+		PrintStream fileOut = new PrintStream("./out.txt");
+		//System.setOut(fileOut);
 
 		in = new Scanner (System.in);
 		
@@ -71,12 +72,12 @@ public class Console {
 
 					// later - it does not need to be in a variable but it still needs to be called
 					getVariables(exp);
-					//System.out.println("Before substitute: " + exp);
+					System.out.println("Before substitute: " + exp);
 					Expression subbed = substitute(exp);
-					//System.out.println("Before replced after sub" + subbed);
+					System.out.println("Before replced after sub" + subbed);
 
 					Expression replaced = insertVariables(deepCopy(subbed));
-					//System.out.println("after  replced" + replaced);
+					System.out.println("after  replced" + replaced);
 			
 					System.out.println(replaced);
 
@@ -126,14 +127,22 @@ public class Console {
 	private static Expression substitute(Expression original){
 
 		ArrayList<String> redexPath = findRedexPath(original);
-		// should find path to topmost leftmost redex
 
 		if(redexPath == null){
 			return original;
 		}
 		
 		while (!(redexPath == null)){
+			System.out.println(original);
 			Application redex = getRedex(new ArrayList<String>(redexPath), original); 
+			//System.out.println(redex);
+			//System.out.println(redex.getClass());
+			if(redex instanceof Application){
+				Application a = (Application) redex;
+				//System.out.println(a.getClass());
+			}
+			System.out.println(redexPath);
+			System.out.println();
 			redex = alphaReduce(redex.getLeft(), redex.getRight());
 
 			Function f = ((Function) (redex.getLeft()));
@@ -147,53 +156,68 @@ public class Console {
 	}
 	
 	private static ArrayList<String> findRedexPath(Expression exp){
-		// System.out.println("Found redex path: " + findRedexPath(exp, new ArrayList<String>(), null));
-		return findRedexPath(exp, new ArrayList<String>(), null);
+		return findRedexPath(exp, new ArrayList<String>(), exp);
 	}
 	
-	// direction : which direction it last came from
-	private static ArrayList<String> findRedexPath(Expression exp, ArrayList<String> path, String direction){
-		// System.out.println("Finding redex path: on " + exp);
 
-		// root case
-		if (direction != null)
-			path.add(direction);
+	private static ArrayList<String> findRedexPath(Expression exp, ArrayList<String> path, Expression original){
+		path = new ArrayList<String>(path);
+		if(exp instanceof Variable){
+			return null;
+		}
+		else if (exp instanceof Function){
+			path.add("right");
+			return findRedexPath(((Function)exp).getExpression(), path, original);
+		}
+		else{ // Application
+			Application a = (Application)exp;
 
-		if (exp instanceof Application){
-			Application a  = (Application) exp;
-			// check if it's a redex 
-			if(a.getLeft() instanceof Function)
+			// Found redex!!
+			if (a.getLeft() instanceof Function){
 				return path;
+			}
+				
+			path.add("left");
+			ArrayList<String> left = findRedexPath(a.getLeft(), path, original);
+			
+			// Successfully found redex
+			if (!(left == null)){
+				return left;}
 			else {
-				ArrayList<String> left = findRedexPath(a.getLeft(), path, "left");
-				if(left != null){ // left has a redex
-					return left;
+				//remove the 'left', replace with 'right'
+
+				String remove = path.remove(path.size()-1);
+				if(remove.equals("left")){
+					path.add("right");
+					return findRedexPath(a.getRight(), path, original);
+
 				}
-				else{ // check right for redex
-					ArrayList<String> right = findRedexPath(a.getRight(), path, "right"); 
-					// if right had a redex
-					if (right != null) {
-						return right;
+				else{
+					while((path.size() >= 1) && (path.get(path.size() - 1).equals("right"))){
+						path.remove(path.size() - 1);
+					}
+					if(path.size() == 0){
+						return null; // we only took rights and found no redexes
+					}
+					else{ //we hit a left
+						path.remove(path.size() - 1);
+						path.add("right"); // replace the previous left with a right
+						return findRedexPath(getRedex(path, original), path, original);
 					}
 				}
+				
+
+				
+
 			}
+			
 		}
-		else if (exp instanceof Function) { // function
-			// if child doesnt find a redex - remove its own direction 
-			ArrayList<String> right = findRedexPath(((Function)exp).getExpression(), path, "right");
-			if(right != null) 
-				return right;
-		}
-		// Variable case or no redex was returned
-		if (direction != null)
-			path.remove(path.size()-1);
-		return null;
+		
 	}
 
 	private static Application getRedex(ArrayList<String> path, Expression current){
 		//get redex given the path 
 		if(path.size() == 0){
-			//System.out.println("current: " + current);
 			return (Application)(current);
 		}
 
@@ -213,7 +237,6 @@ public class Console {
 	}
 
 	private static Expression replace(ArrayList<String> path, Expression newExpression, Expression current){
-		newExpression = deepCopy(newExpression);
 		if (path.size() == 0){
 			return newExpression;
 
@@ -238,9 +261,8 @@ public class Console {
 
 				// variable
 				else{
-					if (!(current instanceof FreeVariable))
-						return newExpression;
-					return current;
+					
+					return newExpression;
 				}
 			}
 
@@ -307,6 +329,9 @@ public class Console {
 			for(int j = 0; j < rightVariables.size(); j++){
 				if(rightVariables.get(j).name.equals(param.name)){
 					rename(param);
+					System.out.println("After renaming param, parm name is:" + param.name);
+					System.out.println(left);
+					System.out.println(right);
 					break;
 				}
 			}
@@ -327,6 +352,7 @@ public class Console {
 	}
 
 	public static String rename(Variable var){
+		System.out.println("Renaming: " + var.name);
 		if(!(variableNames.contains(var.name))){
 			return var.name;
 		}
@@ -337,14 +363,19 @@ public class Console {
 
 		}
 
+		
 		String name = var + String.valueOf(count);
+		System.out.println("NEW NAME IS: " + name);
 		variableNames.add(name);
 		var.setName(name);	
+		System.out.println(var.name);
 
 		if (var instanceof ParameterVariable){
 			ParameterVariable param = (ParameterVariable)var;
 			// goes through all bound variables
 			ArrayList<BoundVariable> boundVars = param.getBoundVars();
+			System.out.println("Changing all bound vars to " + param.name);
+			System.out.println(param.getBoundVars().size());
 			for(int j = 0; j < boundVars.size(); j++){
 				// changes name to match param variable
 				param.getBoundVars().get(j).setName(param.name);
@@ -407,10 +438,8 @@ public class Console {
 		/*
 		take result of getVariables on left and right expression 
 		and take the resulting lists from the hashmaps
-
 		compare similarities of the param and free and
 			do something.
-
 			
 		*/
 		

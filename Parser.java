@@ -173,7 +173,6 @@ public class Parser {
 			if(variable.equals(paramVariables.get(i).name)){
 				contains = true;
 				param = paramVariables.get(i);
-				break;
 			}
 		}
 		if(contains){
