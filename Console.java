@@ -7,9 +7,6 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.lang.model.util.ElementScanner14;
-
-
 public class Console {
 	private static Scanner in;
 	public static HashMap<String, ArrayList<String>> declaredVariables = new HashMap<String, ArrayList<String>>();
@@ -18,8 +15,8 @@ public class Console {
 	public static ArrayList<String> variableNames = new ArrayList<String>();
 	
 	public static void main(String[] args) throws Exception{
-		PrintStream fileOut = new PrintStream("./out.txt");
-		System.setOut(fileOut);
+		// PrintStream fileOut = new PrintStream("./out.txt");
+		// System.setOut(fileOut);
 
 		in = new Scanner (System.in);
 		
@@ -71,7 +68,6 @@ public class Console {
 					ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(1, tokens.size()));
 
 					Expression exp = parser.parse(newTokens);
-					System.out.println(exp);
 
 					// later - it does not need to be in a variable but it still needs to be called
 					getVariables(exp);
@@ -168,7 +164,6 @@ public class Console {
 			// check if it's a redex 
 			if(a.getLeft() instanceof Function)
 				return path;
-
 			else {
 				ArrayList<String> left = findRedexPath(a.getLeft(), path, "left");
 				if(left != null){ // left has a redex
@@ -176,38 +171,23 @@ public class Console {
 				}
 				else{ // check right for redex
 					ArrayList<String> right = findRedexPath(a.getRight(), path, "right"); 
-					
 					// if right had a redex
 					if (right != null) {
 						return right;
-					}
-					else { // both children of application had no redex
-						if (direction != null)
-							path.remove(path.size()-1);
-						return null;
 					}
 				}
 			}
 		}
 		else if (exp instanceof Function) { // function
-
 			// if child doesnt find a redex - remove its own direction 
 			ArrayList<String> right = findRedexPath(((Function)exp).getExpression(), path, "right");
-			if(right == null) {
-				if (direction != null)
-					path.remove(path.size()-1);
-				return null;
-			}
-			else
+			if(right != null) 
 				return right;
 		}
-		else {
-			// Variable case - dead end!
-			if (direction != null)
-				path.remove(path.size()-1);
-			return null;
-		}
-
+		// Variable case or no redex was returned
+		if (direction != null)
+			path.remove(path.size()-1);
+		return null;
 	}
 
 	private static Application getRedex(ArrayList<String> path, Expression current){
@@ -233,6 +213,7 @@ public class Console {
 	}
 
 	private static Expression replace(ArrayList<String> path, Expression newExpression, Expression current){
+		newExpression = deepCopy(newExpression);
 		if (path.size() == 0){
 			return newExpression;
 
@@ -257,8 +238,9 @@ public class Console {
 
 				// variable
 				else{
-					
-					return newExpression;
+					if (!(current instanceof FreeVariable))
+						return newExpression;
+					return current;
 				}
 			}
 
