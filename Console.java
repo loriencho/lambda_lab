@@ -7,6 +7,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.lang.model.util.ElementScanner14;
+
 
 public class Console {
 	private static Scanner in;
@@ -17,7 +19,7 @@ public class Console {
 	
 	public static void main(String[] args) throws Exception{
 		PrintStream fileOut = new PrintStream("./out.txt");
-		//System.setOut(fileOut);
+		System.setOut(fileOut);
 
 		in = new Scanner (System.in);
 		
@@ -69,15 +71,16 @@ public class Console {
 					ArrayList<String> newTokens = new ArrayList<String>(tokens.subList(1, tokens.size()));
 
 					Expression exp = parser.parse(newTokens);
+					System.out.println(exp);
 
 					// later - it does not need to be in a variable but it still needs to be called
 					getVariables(exp);
-					System.out.println("Before substitute: " + exp);
+					//System.out.println("Before substitute: " + exp);
 					Expression subbed = substitute(exp);
-					System.out.println("Before replced after sub" + subbed);
+					//System.out.println("Before replced after sub" + subbed);
 
 					Expression replaced = insertVariables(deepCopy(subbed));
-					System.out.println("after  replced" + replaced);
+					//System.out.println("after  replced" + replaced);
 			
 					System.out.println(replaced);
 
@@ -127,6 +130,7 @@ public class Console {
 	private static Expression substitute(Expression original){
 
 		ArrayList<String> redexPath = findRedexPath(original);
+		// should find path to topmost leftmost redex
 
 		if(redexPath == null){
 			return original;
@@ -147,50 +151,69 @@ public class Console {
 	}
 	
 	private static ArrayList<String> findRedexPath(Expression exp){
-		return findRedexPath(exp, new ArrayList<String>());
+		// System.out.println("Found redex path: " + findRedexPath(exp, new ArrayList<String>(), null));
+		return findRedexPath(exp, new ArrayList<String>(), null);
 	}
 	
+	// direction : which direction it last came from
+	private static ArrayList<String> findRedexPath(Expression exp, ArrayList<String> path, String direction){
+		// System.out.println("Finding redex path: on " + exp);
 
-	private static ArrayList<String> findRedexPath(Expression exp, ArrayList<String> path){
-		path = new ArrayList<String>(path);
-		if(exp instanceof Variable){
+		// root case
+		if (direction != null)
+			path.add(direction);
+
+		if (exp instanceof Application){
+			Application a  = (Application) exp;
+			// check if it's a redex 
+			if(a.getLeft() instanceof Function)
+				return path;
+
+			else {
+				ArrayList<String> left = findRedexPath(a.getLeft(), path, "left");
+				if(left != null){ // left has a redex
+					return left;
+				}
+				else{ // check right for redex
+					ArrayList<String> right = findRedexPath(a.getRight(), path, "right"); 
+					
+					// if right had a redex
+					if (right != null) {
+						return right;
+					}
+					else { // both children of application had no redex
+						if (direction != null)
+							path.remove(path.size()-1);
+						return null;
+					}
+				}
+			}
+		}
+		else if (exp instanceof Function) { // function
+
+			// if child doesnt find a redex - remove its own direction 
+			ArrayList<String> right = findRedexPath(((Function)exp).getExpression(), path, "right");
+			if(right == null) {
+				if (direction != null)
+					path.remove(path.size()-1);
+				return null;
+			}
+			else
+				return right;
+		}
+		else {
+			// Variable case - dead end!
+			if (direction != null)
+				path.remove(path.size()-1);
 			return null;
 		}
-		else if (exp instanceof Function){
-			path.add("right");
-			return findRedexPath(((Function)exp).getExpression(), path);
-		}
-		else{ // Application
-			Application a = (Application)exp;
 
-			// Found redex!!
-			if (a.getLeft() instanceof Function){
-				return path;
-			}
-				
-			path.add("left");
-			ArrayList<String> left = findRedexPath(a.getLeft(), path);
-			// Successfully found redex
-			if (!(left == null)){
-
-				return left;}
-			else {
-				//remove the 'left', replace with 'right'
-
-				path.remove(path.size()-1);
-				path.add("right");
-
-				return findRedexPath(a.getRight(), path);
-
-			}
-			
-		}
-		
 	}
 
 	private static Application getRedex(ArrayList<String> path, Expression current){
 		//get redex given the path 
 		if(path.size() == 0){
+			//System.out.println("current: " + current);
 			return (Application)(current);
 		}
 
