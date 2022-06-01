@@ -17,7 +17,7 @@ public class Console {
 	
 	public static void main(String[] args) throws Exception{
 		PrintStream fileOut = new PrintStream("./out.txt");
-		System.setOut(fileOut);
+		//System.setOut(fileOut);
 
 		in = new Scanner (System.in);
 		
@@ -72,8 +72,12 @@ public class Console {
 
 					// later - it does not need to be in a variable but it still needs to be called
 					getVariables(exp);
+					System.out.println("Before substitute: " + exp);
 					Expression subbed = substitute(exp);
+					System.out.println("Before replced after sub" + subbed);
+
 					Expression replaced = insertVariables(deepCopy(subbed));
+					System.out.println("after  replced" + replaced);
 			
 					System.out.println(replaced);
 
