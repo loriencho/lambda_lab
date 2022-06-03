@@ -51,7 +51,9 @@ public class Parser {
 		}
 		if(openCounter != closeCounter)
 			throw new ParseException("Paren not balanced", 0);
-		return parseRunner(tokens, 0, tokens.size(), new ArrayList<ParameterVariable>());
+		Expression exp = parseRunner(tokens, 0, tokens.size(), new ArrayList<ParameterVariable>());
+		setBoundVariables(exp, new ArrayList<ParameterVariable>());
+		return exp;
 
 	}
 	private Expression parseRunner(ArrayList<String> tokens, int start, int end, ArrayList<ParameterVariable> paramVariables) throws ParseException {
@@ -177,13 +179,45 @@ public class Parser {
 		}
 		if(contains){
 			BoundVariable b = new BoundVariable(variable);
-			param.getBoundVars().add(b);
+			//param.getBoundVars().add(b);
 			return b;
 		} 
 
 		// free variables
 		return new FreeVariable(variable);
 
+	}
+
+	public void setBoundVariables(Expression exp,ArrayList<ParameterVariable> pv){
+		System.out.println("CALLED");
+		if(exp instanceof Application){
+			Application a = (Application) exp;
+			setBoundVariables(a.getLeft(), new ArrayList<ParameterVariable>(pv));
+			setBoundVariables(a.getRight(), new ArrayList<ParameterVariable>(pv));
+		}
+		else if(exp instanceof Function){
+			Function f = (Function) exp;
+			ArrayList<ParameterVariable> pv1 = new ArrayList<ParameterVariable>(pv);
+			pv1.add(f.getVariable());
+			setBoundVariables(f.getExpression(), pv1);
+		}
+		else{ //variable case
+			if(exp instanceof BoundVariable){
+				BoundVariable b = (BoundVariable) exp;
+				// get last index of that bound var name in pv
+				// the bound var should have a matching name in pv
+
+				int index = -1; // dummy value
+				for(int i = pv.size() - 1; i >= 0; i--){
+					if(pv.get(i).name.equals(b.name)){
+						index = i;
+						break;
+					}
+				}
+
+				pv.get(index).getBoundVars().add(b);
+			}
+		}
 	}
 
 
