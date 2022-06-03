@@ -17,7 +17,7 @@ public class Console {
 	
 	public static void main(String[] args) throws Exception{
 		PrintStream fileOut = new PrintStream("./out.txt");
-		//System.setOut(fileOut);
+		System.setOut(fileOut);
 
 		in = new Scanner (System.in);
 		
@@ -44,6 +44,7 @@ public class Console {
 						Expression exp;
 						ArrayList<String> newTokens;
 						if(tokens.get(2).equals("run")){
+							System.out.println("START HERE");
 							newTokens = new ArrayList<String>(tokens.subList(3, tokens.size()));
 							exp = parser.parse(newTokens);
 							getVariables(exp);
@@ -72,12 +73,9 @@ public class Console {
 
 					// later - it does not need to be in a variable but it still needs to be called
 					getVariables(exp);
-					System.out.println("Before substitute: " + exp);
 					Expression subbed = substitute(exp);
-					System.out.println("Before replced after sub" + subbed);
 
 					Expression replaced = insertVariables(deepCopy(subbed));
-					System.out.println("after  replced" + replaced);
 			
 					System.out.println(replaced);
 
@@ -135,19 +133,11 @@ public class Console {
 		while (!(redexPath == null)){
 			System.out.println(original);
 			Application redex = getRedex(new ArrayList<String>(redexPath), original); 
-			//System.out.println(redex);
-			//System.out.println(redex.getClass());
-			if(redex instanceof Application){
-				Application a = (Application) redex;
-				//System.out.println(a.getClass());
-			}
-			System.out.println(redexPath);
-			System.out.println();
 			redex = alphaReduce(redex.getLeft(), redex.getRight());
 
 			Function f = ((Function) (redex.getLeft()));
-			original = replace(new ArrayList<String>(redexPath), substituteRunner(f, redex.getRight()), original);
 
+			original = replace(new ArrayList<String>(redexPath), substituteRunner(f, redex.getRight()), original);
 			redexPath = findRedexPath(original);
 
 		}
@@ -329,9 +319,12 @@ public class Console {
 			for(int j = 0; j < rightVariables.size(); j++){
 				if(rightVariables.get(j).name.equals(param.name)){
 					rename(param);
-					System.out.println("After renaming param, parm name is:" + param.name);
+					/*
+					System.out.println("After renaming param, param name is:" + param.name);
+					System.out.println("Left, then right expressieon of aplication:");
 					System.out.println(left);
 					System.out.println(right);
+					*/
 					break;
 				}
 			}
@@ -352,7 +345,6 @@ public class Console {
 	}
 
 	public static String rename(Variable var){
-		System.out.println("Renaming: " + var.name);
 		if(!(variableNames.contains(var.name))){
 			return var.name;
 		}
@@ -365,10 +357,9 @@ public class Console {
 
 		
 		String name = var + String.valueOf(count);
-		System.out.println("NEW NAME IS: " + name);
 		variableNames.add(name);
 		var.setName(name);	
-		System.out.println(var.name);
+		
 
 		if (var instanceof ParameterVariable){
 			ParameterVariable param = (ParameterVariable)var;

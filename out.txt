@@ -1,0 +1,343 @@
+> > Correct-Answer!
+> No-Spaces?-Correct-Answer!
+> Added (\f.(\x.x)) as false
+> Added (\x.(\y.x)) as true
+> Added (\p.(\q.((p q) p))) as and
+> (((\p.(\q.((p q) p))) (\f.(\x.x))) (\f.(\x.x)))
+((\q.(((\f.(\x.x)) q) (\f.(\x.x)))) (\f.(\x.x)))
+Changing all bound vars to f1
+0
+Changing all bound vars to x1
+1
+Changing all bound vars to f2
+0
+Changing all bound vars to x2
+1
+(((\f1.(\x1.x1)) (\f.(\x.x))) (\f2.(\x2.x2)))
+((\x1.x1) (\f2.(\x2.x2)))
+false
+> (((\p.(\q.((p q) p))) (\f.(\x.x))) (\x.(\y.x)))
+((\q.(((\f.(\x.x)) q) (\f.(\x.x)))) (\x.(\y.x)))
+Changing all bound vars to x1
+1
+Changing all bound vars to x2
+1
+(((\f.(\x1.x1)) (\x.(\y.x))) (\f.(\x2.x2)))
+((\x1.x1) (\f.(\x2.x2)))
+false
+> (((\p.(\q.((p q) p))) (\x.(\y.x))) (\f.(\x.x)))
+((\q.(((\x.(\y.x)) q) (\x.(\y.x)))) (\f.(\x.x)))
+Changing all bound vars to x1
+1
+Changing all bound vars to x2
+1
+(((\x1.(\y.x1)) (\f.(\x.x))) (\x2.(\y.x2)))
+((\y.(\f.(\x.x))) (\x2.(\y.x2)))
+Changing all bound vars to y1
+0
+false
+> (((\p.(\q.((p q) p))) (\x.(\y.x))) (\x.(\y.x)))
+((\q.(((\x.(\y.x)) q) (\x.(\y.x)))) (\x.(\y.x)))
+Changing all bound vars to x1
+1
+Changing all bound vars to y1
+0
+Changing all bound vars to x2
+1
+Changing all bound vars to y2
+0
+(((\x1.(\y1.x1)) (\x.(\y.x))) (\x2.(\y2.x2)))
+((\y1.(\x.(\y.x))) (\x2.(\y2.x2)))
+true
+> Added (\p.(\q.((p p) q))) as or
+> (((\p.(\q.((p p) q))) (\f.(\x.x))) (\f.(\x.x)))
+((\q.(((\f.(\x.x)) (\f.(\x.x))) q)) (\f.(\x.x)))
+Changing all bound vars to f1
+0
+Changing all bound vars to x1
+1
+Changing all bound vars to f2
+0
+Changing all bound vars to x2
+1
+(((\f1.(\x1.x1)) (\f2.(\x2.x2))) (\f.(\x.x)))
+((\x1.x1) (\f.(\x.x)))
+false
+> (((\p.(\q.((p p) q))) (\f.(\x.x))) (\x.(\y.x)))
+((\q.(((\f.(\x.x)) (\f.(\x.x))) q)) (\x.(\y.x)))
+Changing all bound vars to x1
+1
+Changing all bound vars to x2
+1
+(((\f.(\x1.x1)) (\f.(\x2.x2))) (\x.(\y.x)))
+Changing all bound vars to f1
+0
+((\x1.x1) (\x.(\y.x)))
+true
+> (((\p.(\q.((p p) q))) (\x.(\y.x))) (\f.(\x.x)))
+((\q.(((\x.(\y.x)) (\x.(\y.x))) q)) (\f.(\x.x)))
+Changing all bound vars to x1
+1
+Changing all bound vars to x2
+1
+(((\x1.(\y.x1)) (\x2.(\y.x2))) (\f.(\x.x)))
+Changing all bound vars to y1
+0
+((\y1.(\x2.(\y.x2))) (\f.(\x.x)))
+true
+> (((\p.(\q.((p p) q))) (\x.(\y.x))) (\x.(\y.x)))
+((\q.(((\x.(\y.x)) (\x.(\y.x))) q)) (\x.(\y.x)))
+Changing all bound vars to x1
+1
+Changing all bound vars to y1
+0
+Changing all bound vars to x2
+1
+Changing all bound vars to y2
+0
+(((\x1.(\y1.x1)) (\x2.(\y2.x2))) (\x.(\y.x)))
+((\y1.(\x2.(\y2.x2))) (\x.(\y.x)))
+true
+> Added (\p.((p (\f.(\x.x))) (\x.(\y.x)))) as not
+> ((\p.((p (\f.(\x.x))) (\x.(\y.x)))) (\f.(\x.x)))
+Changing all bound vars to f1
+0
+Changing all bound vars to x1
+1
+Changing all bound vars to x2
+1
+(((\f.(\x.x)) (\f1.(\x1.x1))) (\x2.(\y.x2)))
+((\x.x) (\x2.(\y.x2)))
+true
+> ((\p.((p (\f.(\x.x))) (\x.(\y.x)))) (\x.(\y.x)))
+Changing all bound vars to x1
+1
+Changing all bound vars to x2
+1
+Changing all bound vars to y1
+0
+(((\x.(\y.x)) (\f.(\x1.x1))) (\x2.(\y1.x2)))
+((\y.(\f.(\x1.x1))) (\x2.(\y1.x2)))
+false
+> Added (\p.(\q.((p ((\p.((p (\f.(\x.x))) (\x.(\y.x)))) q)) q))) as xor
+> (((\p.(\q.((p ((\p.((p (\f.(\x.x))) (\x.(\y.x)))) q)) q))) (\f.(\x.x))) (\f.(\x.x)))
+Changing all bound vars to f1
+0
+Changing all bound vars to x1
+1
+Changing all bound vars to x2
+1
+((\q.(((\f.(\x.x)) ((\p.((p (\f1.(\x1.x1))) (\x2.(\y.x2)))) q)) q)) (\f.(\x.x)))
+Changing all bound vars to f2
+0
+Changing all bound vars to x3
+1
+(((\f2.(\x3.x3)) ((\p.((p (\f1.(\x1.x1))) (\x2.(\y.x2)))) (\f.(\x.x)))) (\f.(\x.x)))
+((\x3.x3) (\f.(\x.x)))
+false
+> (((\p.(\q.((p ((\p.((p (\f.(\x.x))) (\x.(\y.x)))) q)) q))) (\f.(\x.x))) (\x.(\y.x)))
+Changing all bound vars to f1
+0
+Changing all bound vars to x1
+1
+Changing all bound vars to x2
+1
+((\q.(((\f.(\x.x)) ((\p.((p (\f1.(\x1.x1))) (\x2.(\y.x2)))) q)) q)) (\x.(\y.x)))
+Changing all bound vars to x3
+1
+Changing all bound vars to y1
+0
+(((\f.(\x3.x3)) ((\p.((p (\f1.(\x1.x1))) (\x2.(\y1.x2)))) (\x.(\y.x)))) (\x.(\y.x)))
+((\x3.x3) (\x.(\y.x)))
+true
+> (((\p.(\q.((p ((\p.((p (\f.(\x.x))) (\x.(\y.x)))) q)) q))) (\x.(\y.x))) (\f.(\x.x)))
+Changing all bound vars to x1
+1
+Changing all bound vars to x2
+1
+Changing all bound vars to y1
+0
+((\q.(((\x.(\y.x)) ((\p.((p (\f.(\x1.x1))) (\x2.(\y1.x2)))) q)) q)) (\f.(\x.x)))
+Changing all bound vars to x3
+1
+Changing all bound vars to f1
+0
+(((\x3.(\y.x3)) ((\p.((p (\f1.(\x1.x1))) (\x2.(\y1.x2)))) (\f.(\x.x)))) (\f.(\x.x)))
+((\y.((\p.((p (\f1.(\x1.x1))) (\x2.(\y1.x2)))) (\f.(\x.x)))) (\f.(\x.x)))
+Changing all bound vars to f2
+0
+Changing all bound vars to x4
+1
+((\p.((p (\f1.(\x1.x1))) (\x2.(\y1.x2)))) (\f2.(\x4.x4)))
+(((\f2.(\x4.x4)) (\f1.(\x1.x1))) (\x2.(\y1.x2)))
+((\x4.x4) (\x2.(\y1.x2)))
+true
+> (((\p.(\q.((p ((\p.((p (\f.(\x.x))) (\x.(\y.x)))) q)) q))) (\x.(\y.x))) (\x.(\y.x)))
+Changing all bound vars to x1
+1
+Changing all bound vars to x2
+1
+Changing all bound vars to y1
+0
+((\q.(((\x.(\y.x)) ((\p.((p (\f.(\x1.x1))) (\x2.(\y1.x2)))) q)) q)) (\x.(\y.x)))
+Changing all bound vars to x3
+1
+Changing all bound vars to y2
+0
+(((\x3.(\y2.x3)) ((\p.((p (\f.(\x1.x1))) (\x2.(\y1.x2)))) (\x.(\y.x)))) (\x.(\y.x)))
+((\y2.((\p.((p (\f.(\x1.x1))) (\x2.(\y1.x2)))) (\x.(\y.x)))) (\x.(\y.x)))
+Changing all bound vars to x4
+1
+Changing all bound vars to y3
+0
+((\p.((p (\f.(\x1.x1))) (\x2.(\y1.x2)))) (\x4.(\y3.x4)))
+(((\x4.(\y3.x4)) (\f.(\x1.x1))) (\x2.(\y1.x2)))
+((\y3.(\f.(\x1.x1))) (\x2.(\y1.x2)))
+false
+> ***********************
+> IF-TESTS
+> ***********************
+> Added (\b.(\T.(\F.((b T) F)))) as if
+> ((((\b.(\T.(\F.((b T) F)))) (((\p.(\q.((p q) p))) (\x.(\y.x))) (\f.(\x.x)))) WRONG-ANSWER) Correct-Answer!)
+(((\T.(\F.(((((\p.(\q.((p q) p))) (\x.(\y.x))) (\f.(\x.x))) T) F))) WRONG-ANSWER) Correct-Answer!)
+((\F.(((((\p.(\q.((p q) p))) (\x.(\y.x))) (\f.(\x.x))) WRONG-ANSWER) F)) Correct-Answer!)
+(((((\p.(\q.((p q) p))) (\x.(\y.x))) (\f.(\x.x))) WRONG-ANSWER) Correct-Answer!)
+((((\q.(((\x.(\y.x)) q) (\x.(\y.x)))) (\f.(\x.x))) WRONG-ANSWER) Correct-Answer!)
+Changing all bound vars to x1
+1
+Changing all bound vars to x2
+1
+(((((\x1.(\y.x1)) (\f.(\x.x))) (\x2.(\y.x2))) WRONG-ANSWER) Correct-Answer!)
+((((\y.(\f.(\x.x))) (\x2.(\y.x2))) WRONG-ANSWER) Correct-Answer!)
+Changing all bound vars to y1
+0
+(((\f.(\x.x)) WRONG-ANSWER) Correct-Answer!)
+((\x.x) Correct-Answer!)
+Correct-Answer!
+> NUMBER-OPERATIONS
+> Added (\n.(\f.(\x.(f ((n f) x))))) as succ
+> Added (\n.(\f.(\x.(((n (\g.(\h.(h (g f))))) (\u.x)) (\u.u))))) as pred
+> Added (\m.(\n.(\f.(\x.((m f) ((n f) x)))))) as +
+> Added (\n.(\m.(\f.(\x.((n (m f)) x))))) as *
+> Added (\m.(\n.((n (\n.(\f.(\x.(((n (\g.(\h.(h (g f))))) (\u.x)) (\u.u)))))) m))) as -
+> ***********************
+> GENERATING-NUMBERS-WITH-RUN
+> ***********************
+> Added (\f.(\x.x)) as 0
+> START HERE
+((\n.(\f.(\x.(f ((n f) x))))) (\f.(\x.x)))
+Changing all bound vars to f1
+2
+Changing all bound vars to x1
+1
+(\f1.(\x1.(f1 (((\f.(\x.x)) f1) x1))))
+(\f1.(\x1.(f1 ((\x.x) x1))))
+Added (\f1.(\x1.(f1 x1))) as 1
+> START HERE
+((\n.(\f.(\x.(f ((n f) x))))) (\f1.(\x1.(f1 x1))))
+(\f.(\x.(f (((\f1.(\x1.(f1 x1))) f) x))))
+(\f.(\x.(f ((\x1.(f x1)) x))))
+Added (\f.(\x.(f (f x)))) as 2
+> START HERE
+(((\m.(\n.(\f.(\x.((m f) ((n f) x)))))) (\f.(\x.(f (f x))))) (\f1.(\x1.(f1 x1))))
+Changing all bound vars to f2
+2
+Changing all bound vars to x2
+1
+((\n.(\f2.(\x2.(((\f.(\x.(f (f x)))) f2) ((n f2) x2))))) (\f1.(\x1.(f1 x1))))
+(\f2.(\x2.(((\f.(\x.(f (f x)))) f2) (((\f1.(\x1.(f1 x1))) f2) x2))))
+(\f2.(\x2.((\x.(f2 (f2 x))) (((\f1.(\x1.(f1 x1))) f2) x2))))
+(\f2.(\x2.(f2 (f2 (((\f1.(\x1.(f1 x1))) f2) x2)))))
+(\f2.(\x2.(f2 (f2 ((\x1.(f2 x1)) x2)))))
+Added (\f2.(\x2.(f2 (f2 (f2 x2))))) as 3
+> START HERE
+(((\n.(\m.(\f.(\x.((n (m f)) x))))) (\f.(\x.(f (f x))))) (\f.(\x.(f (f x)))))
+Changing all bound vars to f1
+1
+Changing all bound vars to x1
+1
+((\m.(\f1.(\x1.(((\f.(\x.(f (f x)))) (m f1)) x1)))) (\f.(\x.(f (f x)))))
+Changing all bound vars to f2
+2
+Changing all bound vars to x2
+1
+(\f1.(\x1.(((\f2.(\x2.(f2 (f2 x2)))) ((\f.(\x.(f (f x)))) f1)) x1)))
+(\f1.(\x1.((\x2.(((\f.(\x.(f (f x)))) f1) (((\f.(\x.(f (f x)))) f1) x2))) x1)))
+(\f1.(\x1.(((\f.(\x.(f (f x)))) f1) (((\f.(\x.(f (f x)))) f1) x1))))
+(\f1.(\x1.((\x.(f1 (f1 x))) (((\f.(\x.(f (f x)))) f1) x1))))
+Changing all bound vars to x3
+1
+(\f1.(\x1.(f1 (f1 (((\f.(\x.(f (f x)))) f1) x1)))))
+(\f1.(\x1.(f1 (f1 ((\x.(f1 (f1 x))) x1)))))
+Added (\f1.(\x1.(f1 (f1 (f1 (f1 x1)))))) as 4
+> Added (\f.(\x.(f (f (f (f (f x))))))) as 5
+> START HERE
+((\n.(\f.(\x.(((n (\g.(\h.(h (g f))))) (\u.x)) (\u.u))))) ((\n.(\f.(\x.(((n (\g.(\h.(h (g f))))) (\u.x)) (\u.u))))) ((\n.(\f.(\x.(f ((n f) x))))) (((\m.(\n.(\f.(\x.((m f) ((n f) x)))))) (\f.(\x.(f (f x))))) (\f.(\x.(f (f (f (f (f x)))))))))))
+Changing all bound vars to n1
+1
+Changing all bound vars to f1
+1
+Changing all bound vars to x1
+1
+Changing all bound vars to g1
+1
+Changing all bound vars to h1
+1
+Changing all bound vars to u1
+0
+Changing all bound vars to u2
+1
+(\f1.(\x1.(((((\n.(\f.(\x.(((n (\g.(\h.(h (g f))))) (\u.x)) (\u.u))))) ((\n.(\f.(\x.(f ((n f) x))))) (((\m.(\n.(\f.(\x.((m f) ((n f) x)))))) (\f.(\x.(f (f x))))) (\f.(\x.(f (f (f (f (f x)))))))))) (\g1.(\h1.(h1 (g1 f1))))) (\u1.x1)) (\u2.u2))))
+Changing all bound vars to n2
+3
+Changing all bound vars to f2
+12
+Changing all bound vars to x2
+5
+(\f1.(\x1.((((\f2.(\x2.(((((\n.(\f.(\x.(f2 ((n2 f2) x2))))) (((\m.(\n.(\f.(\x.((m f2) ((n2 f2) x2)))))) (\f.(\x.(f2 (f2 x2))))) (\f.(\x.(f2 (f2 (f2 (f2 (f2 x2))))))))) (\g.(\h.(h (g f2))))) (\u.x2)) (\u.u)))) (\g1.(\h1.(h1 (g1 f1))))) (\u1.x1)) (\u2.u2))))
+(\f1.(\x1.(((\x2.(((((\n.(\f.(\x.((\g1.(\h1.(h1 (g1 f1)))) ((n2 (\g1.(\h1.(h1 (g1 f1))))) x2))))) (((\m.(\n.(\f.(\x.((m (\g1.(\h1.(h1 (g1 f1))))) ((n2 (\g1.(\h1.(h1 (g1 f1))))) x2)))))) (\f.(\x.((\g1.(\h1.(h1 (g1 f1)))) ((\g1.(\h1.(h1 (g1 f1)))) x2))))) (\f.(\x.((\g1.(\h1.(h1 (g1 f1)))) ((\g1.(\h1.(h1 (g1 f1)))) ((\g1.(\h1.(h1 (g1 f1)))) ((\g1.(\h1.(h1 (g1 f1)))) ((\g1.(\h1.(h1 (g1 f1)))) x2))))))))) (\g.(\h.(h (g (\g1.(\h1.(h1 (g1 f1))))))))) (\u.x2)) (\u.u))) (\u1.x1)) (\u2.u2))))
+(\f1.(\x1.((((((\n.(\f.(\x.((\g1.(\h1.(h1 (g1 f1)))) ((n2 (\g1.(\h1.(h1 (g1 f1))))) (\u1.x1)))))) (((\m.(\n.(\f.(\x.((m (\g1.(\h1.(h1 (g1 f1))))) ((n2 (\g1.(\h1.(h1 (g1 f1))))) (\u1.x1))))))) (\f.(\x.((\g1.(\h1.(h1 (g1 f1)))) ((\g1.(\h1.(h1 (g1 f1)))) (\u1.x1)))))) (\f.(\x.((\g1.(\h1.(h1 (g1 f1)))) ((\g1.(\h1.(h1 (g1 f1)))) ((\g1.(\h1.(h1 (g1 f1)))) ((\g1.(\h1.(h1 (g1 f1)))) ((\g1.(\h1.(h1 (g1 f1)))) (\u1.x1)))))))))) (\g.(\h.(h (g (\g1.(\h1.(h1 (g1 f1))))))))) (\u.(\u1.x1))) (\u.u)) (\u2.u2))))
+Changing all bound vars to n3
+0
+Changing all bound vars to f3
+0
+Changing all bound vars to x3
+0
+Changing all bound vars to g11
+1
+Changing all bound vars to h11
+1
+Changing all bound vars to g12
+1
+Changing all bound vars to h12
+1
+Changing all bound vars to u11
+0
+(\f1.(\x1.(((((\f3.(\x3.((\g11.(\h11.(h11 (g11 f1)))) ((n2 (\g12.(\h12.(h12 (g12 f1))))) (\u11.x1))))) (\g.(\h.(h (g (\g1.(\h1.(h1 (g1 f1))))))))) (\u.(\u1.x1))) (\u.u)) (\u2.u2))))
+(\f1.(\x1.((((\x3.((\g11.(\h11.(h11 (g11 f1)))) ((n2 (\g12.(\h12.(h12 (g12 f1))))) (\u11.x1)))) (\u.(\u1.x1))) (\u.u)) (\u2.u2))))
+(\f1.(\x1.((((\g11.(\h11.(h11 (g11 f1)))) ((n2 (\g12.(\h12.(h12 (g12 f1))))) (\u11.x1))) (\u.u)) (\u2.u2))))
+(\f1.(\x1.(((\h11.(h11 (((n2 (\g12.(\h12.(h12 (g12 f1))))) (\u11.x1)) f1))) (\u.u)) (\u2.u2))))
+(\f1.(\x1.(((\u.u) (((n2 (\g12.(\h12.(h12 (g12 f1))))) (\u11.x1)) f1)) (\u2.u2))))
+Added (\f1.(\x1.((((n2 (\g12.(\h12.(h12 (g12 f1))))) (\u11.x1)) f1) (\u2.u2)))) as 6
+> ((\n.(\f.(\x.(((n (\g.(\h.(h (g f))))) (\u.x)) (\u.u))))) (\f2.(\x2.(f2 (f2 (f2 x2))))))
+(\f.(\x.((((\f2.(\x2.(f2 (f2 (f2 x2))))) (\g.(\h.(h (g f))))) (\u.x)) (\u.u))))
+(\f.(\x.(((\x2.((\g.(\h.(h (g f)))) ((\g.(\h.(h (g f)))) ((\g.(\h.(h (g f)))) x2)))) (\u.x)) (\u.u))))
+(\f.(\x.(((\g.(\h.(h (g f)))) ((\g.(\h.(h (g f)))) ((\g.(\h.(h (g f)))) (\u.x)))) (\u.u))))
+Changing all bound vars to g1
+1
+Changing all bound vars to h1
+1
+(\f.(\x.((\h1.(h1 (((\g.(\h.(h (g f)))) ((\g.(\h.(h (g f)))) (\u.x))) f))) (\u.u))))
+Changing all bound vars to u1
+0
+(\f.(\x.((\u.u) (((\g.(\h.(h (g f)))) ((\g.(\h.(h (g f)))) (\u1.x))) f))))
+(\f.(\x.(((\g.(\h.(h (g f)))) ((\g.(\h.(h (g f)))) (\u1.x))) f)))
+Changing all bound vars to g2
+2
+Changing all bound vars to h2
+2
+(\f.(\x.((\h2.(h2 (((\g.(\h.(h2 (g2 f)))) (\u1.x)) f))) f)))
+(\f.(\x.(f (((\g.(\h.(f (g2 f)))) (\u1.x)) f))))
+(\f.(\x.(f ((\h.(f (g2 f))) f))))
+(\f.(\x.(f (f (g2 f)))))
+> 

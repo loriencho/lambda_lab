@@ -189,17 +189,15 @@ public class Parser {
 	}
 
 	public void setBoundVariables(Expression exp,ArrayList<ParameterVariable> pv){
-		System.out.println("CALLED");
 		if(exp instanceof Application){
 			Application a = (Application) exp;
-			setBoundVariables(a.getLeft(), new ArrayList<ParameterVariable>(pv));
-			setBoundVariables(a.getRight(), new ArrayList<ParameterVariable>(pv));
+			setBoundVariables(a.getLeft(), pv);
+			setBoundVariables(a.getRight(), pv);
 		}
 		else if(exp instanceof Function){
 			Function f = (Function) exp;
-			ArrayList<ParameterVariable> pv1 = new ArrayList<ParameterVariable>(pv);
-			pv1.add(f.getVariable());
-			setBoundVariables(f.getExpression(), pv1);
+			pv.add(f.getVariable());
+			setBoundVariables(f.getExpression(), pv);
 		}
 		else{ //variable case
 			if(exp instanceof BoundVariable){
