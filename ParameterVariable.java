@@ -1,23 +1,25 @@
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ParameterVariable extends Variable{
 
-    public ArrayList<BoundVariable> boundVars;
+    public Set<BoundVariable> boundVars;
     
-    public ParameterVariable(String name, ArrayList<BoundVariable> boundVars){
+    public ParameterVariable(String name, Set<BoundVariable> boundVars){
         super(name);
         this.boundVars = boundVars;
     }
 
     public ParameterVariable(String name){
         super(name);
-        this.boundVars = new ArrayList<BoundVariable>();
+        this.boundVars = new HashSet<BoundVariable>();
     }
     public void addBoundVariable(BoundVariable b){
         boundVars.add(b);
     }
 
-    public ArrayList<BoundVariable> getBoundVars(){
+    public Set<BoundVariable> getBoundVars(){
         return boundVars;
     }
 

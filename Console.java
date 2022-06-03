@@ -3,7 +3,9 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -310,6 +312,12 @@ public class Console {
 	
 	public static Application alphaReduce(Expression left, Expression right){
 		ArrayList<Variable> leftParams = getVariables(left).get("parameter");
+		System.out.println("start");
+		for(int i = 0; i < leftParams.size(); i++){
+			ParameterVariable pv = (ParameterVariable) leftParams.get(i);
+			System.out.println(pv + " " + pv.getBoundVars().size());
+		}
+		System.out.println();
 		ArrayList<Variable> rightVariables = getVariables(right).get("free");
 		rightVariables.addAll(getVariables(right).get("parameter"));
 				
@@ -364,12 +372,10 @@ public class Console {
 		if (var instanceof ParameterVariable){
 			ParameterVariable param = (ParameterVariable)var;
 			// goes through all bound variables
-			ArrayList<BoundVariable> boundVars = param.getBoundVars();
-			System.out.println("Changing all bound vars to " + param.name);
-			System.out.println(param.getBoundVars().size());
-			for(int j = 0; j < boundVars.size(); j++){
+			Set<BoundVariable> boundVars = param.getBoundVars();
+			for(BoundVariable b : boundVars){
 				// changes name to match param variable
-				param.getBoundVars().get(j).setName(param.name);
+				b.setName(param.name);
 			}	
 		}	
 		return name;
@@ -437,14 +443,17 @@ public class Console {
 	}
 
 	private static Expression deepCopy(Expression exp){
-		return deepCopy(exp, new ArrayList<Variable>());
+		Expression new_exp = deepCopy(exp, new ArrayList<Variable>());
+		Parser.setBoundVariables(new_exp, new ArrayList<>());
+		return new_exp;
+
 	}
 		
 	  
 	private static Expression deepCopy(Expression exp, ArrayList<Variable> paramVariables){
 		if(exp instanceof ParameterVariable){
 
-			ParameterVariable param =new ParameterVariable(exp.toString(), new ArrayList<BoundVariable>()); 
+			ParameterVariable param =new ParameterVariable(exp.toString(), new HashSet<BoundVariable>()); 
 			paramVariables.add(param);
 			return param;
 
@@ -455,11 +464,8 @@ public class Console {
 
 		}
 		else if(exp instanceof BoundVariable){
-			BoundVariable var = new BoundVariable(exp.toString());;
-			for(int i = 0; i < paramVariables.size(); i++){
-				if(paramVariables.get(i).name.equals(exp.toString()))
-					((ParameterVariable)(paramVariables.get(i))).getBoundVars().add(var);
-			}
+			BoundVariable var = new BoundVariable(exp.toString());
+		
 			return var;
 
 		}

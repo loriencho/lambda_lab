@@ -188,16 +188,18 @@ public class Parser {
 
 	}
 
-	public void setBoundVariables(Expression exp,ArrayList<ParameterVariable> pv){
+	public static void setBoundVariables(Expression exp,ArrayList<ParameterVariable> pv){
+
 		if(exp instanceof Application){
 			Application a = (Application) exp;
-			setBoundVariables(a.getLeft(), pv);
-			setBoundVariables(a.getRight(), pv);
+			setBoundVariables(a.getLeft(), deepArrayCopy(pv));
+			setBoundVariables(a.getRight(), deepArrayCopy(pv));
 		}
 		else if(exp instanceof Function){
 			Function f = (Function) exp;
+			f.getVariable().getBoundVars().clear();
 			pv.add(f.getVariable());
-			setBoundVariables(f.getExpression(), pv);
+			setBoundVariables(f.getExpression(), deepArrayCopy(pv));
 		}
 		else{ //variable case
 			if(exp instanceof BoundVariable){
@@ -216,6 +218,14 @@ public class Parser {
 				pv.get(index).getBoundVars().add(b);
 			}
 		}
+	}
+
+	public static ArrayList<ParameterVariable> deepArrayCopy(ArrayList<ParameterVariable> arr){
+		ArrayList<ParameterVariable> new_arr = new ArrayList<ParameterVariable>(arr.size());
+		for(int i = 0; i < arr.size(); i++){
+			new_arr.add(arr.get(i));
+		}
+		return new_arr;
 	}
 
 
