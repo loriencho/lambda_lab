@@ -58,26 +58,8 @@ public class Parser {
 	}
 	private Expression parseRunner(ArrayList<String> tokens, int start, int end, ArrayList<ParameterVariable> paramVariables) throws ParseException {
 		//end is the size of the sub array
-		
-		// This is nonsense code, just to show you how to thrown an Exception.
-		// To throw it, type "error" at the console.'
-		// if (var.toString().equals("error")) {
-		// 	throw new ParseException("User typed \"Error\" as the input!", 0);
-		// }
-
-		// //* ERROR CHECKING CODE
-		// System.out.setln("Parserunner run");
-		// for(int i = start; i < end; i++){
-		// 	System.out.print(tokens.get(i) + " ");
-		// }
-		// System.out.println("Start: " + start);
-		// System.out.println("End: " + end);
-		// System.out.println();
-
-		//*/
 
 		// No tokens left
-		//COME BACK TO THIS: we might be able to delete this 
 		if ((end - start) <= 0)			
 			return new FreeVariable(""); // ASK MR ISECKE!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -179,7 +161,6 @@ public class Parser {
 		}
 		if(contains){
 			BoundVariable b = new BoundVariable(variable);
-			//param.getBoundVars().add(b);
 			return b;
 		} 
 

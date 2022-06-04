@@ -18,8 +18,8 @@ public class Console {
 	public static ArrayList<String> variableNames = new ArrayList<String>();
 	
 	public static void main(String[] args) throws Exception{
-		PrintStream fileOut = new PrintStream("./out.txt");
-		System.setOut(fileOut);
+		//PrintStream fileOut = new PrintStream("./out.txt");
+		//System.setOut(fileOut);
 
 		in = new Scanner (System.in);
 		
@@ -88,9 +88,6 @@ public class Console {
 				}
 			 } catch (Exception e) {
 				 throw(e);
-			 	// System.out.println("Unparsable expression, input was: \"" + input + "\"");
-			 	// input = cleanConsoleInput();
-			 	// continue;
 			 }
 						
 			input = cleanConsoleInput();
@@ -126,7 +123,6 @@ public class Console {
 	private static Expression substitute(Expression original){
 
 		ArrayList<String> redexPath = findRedexPath(original);
-		// System.out.println("Substitute original: " + original);
 
 		if(redexPath == null){
 			return original;
@@ -137,16 +133,11 @@ public class Console {
 			redex = alphaReduce(redex.getLeft(), redex.getRight());
 
 			Function f = ((Function) (redex.getLeft()));
-			// System.out.println("Replacing this: "+ redex);
-			// System.out.println("Putting this:" + substituteRunner(f, redex.getRight()));
-			// System.out.println("Into this: " + original);
 
 			original = replace(new ArrayList<String>(redexPath), substituteRunner(f, redex.getRight()), original);
 			redexPath = findRedexPath(original);
-			// System.out.println("And got: " + original);
 
 		}
-		// System.out.println("Substitute original after substituting: " + original);
 		return original;
 
 	}
@@ -324,12 +315,6 @@ public class Console {
 			for(int j = 0; j < rightVariables.size(); j++){
 				if(rightVariables.get(j).name.equals(param.name)){
 					rename(param);
-					/*
-					System.out.println("After renaming param, param name is:" + param.name);
-					System.out.println("Left, then right expressieon of aplication:");
-					System.out.println(left);
-					System.out.println(right);
-					*/
 					break;
 				}
 			}
@@ -421,22 +406,7 @@ public class Console {
 		return getVariables(app.getRight(), fVariables, pVariables, bVariables); // the arraylists should be updated by left because of pass by reference??
 
 
-		/*
-		POTENTIALLY
-		take result of getVariables on left and right expression 
-		and take the resulting lists from the hashmaps
-		and combine them
-		and return them in a new hashmap
-		*/
-		
-		/*
-		take result of getVariables on left and right expression 
-		and take the resulting lists from the hashmaps
-		compare similarities of the param and free and
-			do something.
-			
-		*/
-		
+
 	}
 
 	private static Expression deepCopy(Expression exp){

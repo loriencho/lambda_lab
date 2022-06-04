@@ -42,16 +42,6 @@ public class Lexer {
 				token = "";
 			}
 			
-			/*
-			else if( i<input.length()-1 && (input.substring(i, i+2)).equals("\\")){
-				if(!(token.equals(""))){
-					tokens.add(token);
-				}
-				tokens.add("\\");
-				token = "";
-				
-			}
-			*/
 			
 			else if (current.equals(" ")){ //if we get a space
 
