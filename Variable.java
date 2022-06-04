@@ -1,3 +1,4 @@
+//Satwika Vemuri and Lorien Cho
 
 public abstract class Variable implements Expression {
 	protected String name;

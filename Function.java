@@ -1,3 +1,5 @@
+//Satwika Vemuri and Lorien Cho
+
 import java.util.ArrayList;
 
 public class Function implements Expression {

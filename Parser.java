@@ -1,8 +1,7 @@
+//Satwika Vemuri and Lorien Cho
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 
 public class Parser {
 	

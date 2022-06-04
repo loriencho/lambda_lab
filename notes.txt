@@ -1,0 +1,19 @@
+a) Satwika Vemuri and Lorien Cho
+
+b) 8.5/10
+
+c) 20
+
+d) 20
+
+e) 98% -- I know that our code doesn't work for one case in Y-combinator, but I 
+think the amount of effort and collaboration that both me and my partner put in 
+was something neither of us had done before. And there were several times where 
+we had to rework and rewrite entire functions even after going through the entire 
+assignment because we found something in the spreadsheet that failed our code. 
+Where I'm trying to go with all of this is that both of us put a lot of effort 
+both in the lab itself as well as our coding style and I hope you see that 
+reflect in our work :)
+
+f) Case 107 makes our code never end and the last two extra credit statements
+don't work either, but everything else should be good!
