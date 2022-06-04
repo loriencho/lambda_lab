@@ -66,7 +66,7 @@ public class Parser {
 		// }
 
 		// //* ERROR CHECKING CODE
-		// System.out.println("Parserunner run");
+		// System.out.setln("Parserunner run");
 		// for(int i = start; i < end; i++){
 		// 	System.out.print(tokens.get(i) + " ");
 		// }
@@ -189,17 +189,17 @@ public class Parser {
 	}
 
 	public static void setBoundVariables(Expression exp,ArrayList<ParameterVariable> pv){
-
 		if(exp instanceof Application){
 			Application a = (Application) exp;
-			setBoundVariables(a.getLeft(), deepArrayCopy(pv));
-			setBoundVariables(a.getRight(), deepArrayCopy(pv));
+			setBoundVariables(a.getLeft(), pv);
+			setBoundVariables(a.getRight(), pv);
 		}
 		else if(exp instanceof Function){
 			Function f = (Function) exp;
 			f.getVariable().getBoundVars().clear();
 			pv.add(f.getVariable());
-			setBoundVariables(f.getExpression(), deepArrayCopy(pv));
+			setBoundVariables(f.getExpression(), pv);
+			pv.remove(f.getVariable());
 		}
 		else{ //variable case
 			if(exp instanceof BoundVariable){
@@ -212,10 +212,11 @@ public class Parser {
 					if(pv.get(i).name.equals(b.name)){
 						index = i;
 						break;
+				
 					}
 				}
-
-				pv.get(index).getBoundVars().add(b);
+				if (index != -1)
+					pv.get(index).getBoundVars().add(b);
 			}
 		}
 	}

@@ -46,7 +46,6 @@ public class Console {
 						Expression exp;
 						ArrayList<String> newTokens;
 						if(tokens.get(2).equals("run")){
-							System.out.println("START HERE");
 							newTokens = new ArrayList<String>(tokens.subList(3, tokens.size()));
 							exp = parser.parse(newTokens);
 							getVariables(exp);
@@ -127,22 +126,27 @@ public class Console {
 	private static Expression substitute(Expression original){
 
 		ArrayList<String> redexPath = findRedexPath(original);
+		// System.out.println("Substitute original: " + original);
 
 		if(redexPath == null){
 			return original;
 		}
 		
 		while (!(redexPath == null)){
-			System.out.println(original);
 			Application redex = getRedex(new ArrayList<String>(redexPath), original); 
 			redex = alphaReduce(redex.getLeft(), redex.getRight());
 
 			Function f = ((Function) (redex.getLeft()));
+			// System.out.println("Replacing this: "+ redex);
+			// System.out.println("Putting this:" + substituteRunner(f, redex.getRight()));
+			// System.out.println("Into this: " + original);
 
 			original = replace(new ArrayList<String>(redexPath), substituteRunner(f, redex.getRight()), original);
 			redexPath = findRedexPath(original);
+			// System.out.println("And got: " + original);
 
 		}
+		// System.out.println("Substitute original after substituting: " + original);
 		return original;
 
 	}
@@ -284,7 +288,6 @@ public class Console {
 
 	// only substitutes for one function at a time
 	private static Expression substituteRunner(Expression exp, Expression sub, Variable bound){
-		sub = deepCopy(sub);
 		if (exp instanceof Application){
 			Application app = (Application)exp;
 			return new Application(substituteRunner(app.getLeft(), sub, bound), substituteRunner(app.getRight(), sub, bound));
@@ -312,12 +315,6 @@ public class Console {
 	
 	public static Application alphaReduce(Expression left, Expression right){
 		ArrayList<Variable> leftParams = getVariables(left).get("parameter");
-		System.out.println("start");
-		for(int i = 0; i < leftParams.size(); i++){
-			ParameterVariable pv = (ParameterVariable) leftParams.get(i);
-			System.out.println(pv + " " + pv.getBoundVars().size());
-		}
-		System.out.println();
 		ArrayList<Variable> rightVariables = getVariables(right).get("free");
 		rightVariables.addAll(getVariables(right).get("parameter"));
 				

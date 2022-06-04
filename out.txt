@@ -4,478 +4,28 @@
 > Added (\f.(\x.x)) as false
 > Added (\x.(\y.x)) as true
 > Added (\p.(\q.((p q) p))) as and
-> (((\p.(\q.((p q) p))) (\f.(\x.x))) (\f.(\x.x)))
-start
-p 2
-q 1
-
-((\q.(((\f.(\x.x)) q) (\f.(\x.x)))) (\f.(\x.x)))
-start
-q 1
-f 0
-x 1
-f 0
-x 1
-
-(((\f1.(\x1.x1)) (\f.(\x.x))) (\f2.(\x2.x2)))
-start
-f1 0
-x1 1
-
-((\x1.x1) (\f2.(\x2.x2)))
-start
-x1 1
-
-false
-> (((\p.(\q.((p q) p))) (\f.(\x.x))) (\x.(\y.x)))
-start
-p 2
-q 1
-
-((\q.(((\f.(\x.x)) q) (\f.(\x.x)))) (\x.(\y.x)))
-start
-q 1
-f 0
-x 1
-f 0
-x 1
-
-(((\f.(\x1.x1)) (\x.(\y.x))) (\f.(\x2.x2)))
-start
-f 0
-x1 1
-
-((\x1.x1) (\f.(\x2.x2)))
-start
-x1 1
-
-false
-> (((\p.(\q.((p q) p))) (\x.(\y.x))) (\f.(\x.x)))
-start
-p 2
-q 1
-
-((\q.(((\x.(\y.x)) q) (\x.(\y.x)))) (\f.(\x.x)))
-start
-q 1
-x 1
-y 0
-x 1
-y 0
-
-(((\x1.(\y.x1)) (\f.(\x.x))) (\x2.(\y.x2)))
-start
-x1 1
-y 0
-
-((\y.(\f.(\x.x))) (\x2.(\y.x2)))
-start
-y 0
-f 0
-x 1
-
-false
-> (((\p.(\q.((p q) p))) (\x.(\y.x))) (\x.(\y.x)))
-start
-p 2
-q 1
-
-((\q.(((\x.(\y.x)) q) (\x.(\y.x)))) (\x.(\y.x)))
-start
-q 1
-x 1
-y 0
-x 1
-y 0
-
-(((\x1.(\y1.x1)) (\x.(\y.x))) (\x2.(\y2.x2)))
-start
-x1 1
-y1 0
-
-((\y1.(\x.(\y.x))) (\x2.(\y2.x2)))
-start
-y1 0
-x 1
-y 0
-
-true
+> false
+> false
+> false
+> true
 > Added (\p.(\q.((p p) q))) as or
-> (((\p.(\q.((p p) q))) (\f.(\x.x))) (\f.(\x.x)))
-start
-p 2
-q 1
-
-((\q.(((\f.(\x.x)) (\f.(\x.x))) q)) (\f.(\x.x)))
-start
-q 1
-f 0
-x 1
-f 0
-x 1
-
-(((\f1.(\x1.x1)) (\f2.(\x2.x2))) (\f.(\x.x)))
-start
-f1 0
-x1 1
-
-((\x1.x1) (\f.(\x.x)))
-start
-x1 1
-
-false
-> (((\p.(\q.((p p) q))) (\f.(\x.x))) (\x.(\y.x)))
-start
-p 2
-q 1
-
-((\q.(((\f.(\x.x)) (\f.(\x.x))) q)) (\x.(\y.x)))
-start
-q 1
-f 0
-x 1
-f 0
-x 1
-
-(((\f.(\x1.x1)) (\f.(\x2.x2))) (\x.(\y.x)))
-start
-f 0
-x1 1
-
-((\x1.x1) (\x.(\y.x)))
-start
-x1 1
-
-true
-> (((\p.(\q.((p p) q))) (\x.(\y.x))) (\f.(\x.x)))
-start
-p 2
-q 1
-
-((\q.(((\x.(\y.x)) (\x.(\y.x))) q)) (\f.(\x.x)))
-start
-q 1
-x 1
-y 0
-x 1
-y 0
-
-(((\x1.(\y.x1)) (\x2.(\y.x2))) (\f.(\x.x)))
-start
-x1 1
-y 0
-
-((\y1.(\x2.(\y.x2))) (\f.(\x.x)))
-start
-y1 0
-x2 1
-y 0
-
-true
-> (((\p.(\q.((p p) q))) (\x.(\y.x))) (\x.(\y.x)))
-start
-p 2
-q 1
-
-((\q.(((\x.(\y.x)) (\x.(\y.x))) q)) (\x.(\y.x)))
-start
-q 1
-x 1
-y 0
-x 1
-y 0
-
-(((\x1.(\y1.x1)) (\x2.(\y2.x2))) (\x.(\y.x)))
-start
-x1 1
-y1 0
-
-((\y1.(\x2.(\y2.x2))) (\x.(\y.x)))
-start
-y1 0
-x2 1
-y2 0
-
-true
+> false
+> true
+> true
+> true
 > Added (\p.((p (\f.(\x.x))) (\x.(\y.x)))) as not
-> ((\p.((p (\f.(\x.x))) (\x.(\y.x)))) (\f.(\x.x)))
-start
-p 1
-f 0
-x 1
-x 1
-y 0
-
-(((\f.(\x.x)) (\f1.(\x1.x1))) (\x2.(\y.x2)))
-start
-f 0
-x 1
-
-((\x.x) (\x2.(\y.x2)))
-start
-x 1
-
-true
-> ((\p.((p (\f.(\x.x))) (\x.(\y.x)))) (\x.(\y.x)))
-start
-p 1
-f 0
-x 1
-x 1
-y 0
-
-(((\x.(\y.x)) (\f.(\x1.x1))) (\x2.(\y1.x2)))
-start
-x 1
-y 0
-
-((\y.(\f.(\x1.x1))) (\x2.(\y1.x2)))
-start
-y 0
-f 0
-x1 1
-
-false
+> true
+> false
 > Added (\p.(\q.((p ((\p.((p (\f.(\x.x))) (\x.(\y.x)))) q)) q))) as xor
-> (((\p.(\q.((p ((\p.((p (\f.(\x.x))) (\x.(\y.x)))) q)) q))) (\f.(\x.x))) (\f.(\x.x)))
-start
-p 1
-q 2
-p 1
-f 0
-x 1
-x 1
-y 0
-
-((\q.(((\f.(\x.x)) ((\p.((p (\f1.(\x1.x1))) (\x2.(\y.x2)))) q)) q)) (\f.(\x.x)))
-start
-q 2
-f 0
-x 1
-p 1
-f1 0
-x1 1
-x2 1
-y 0
-
-(((\f2.(\x3.x3)) ((\p.((p (\f1.(\x1.x1))) (\x2.(\y.x2)))) (\f.(\x.x)))) (\f.(\x.x)))
-start
-f2 0
-x3 1
-
-((\x3.x3) (\f.(\x.x)))
-start
-x3 1
-
-false
-> (((\p.(\q.((p ((\p.((p (\f.(\x.x))) (\x.(\y.x)))) q)) q))) (\f.(\x.x))) (\x.(\y.x)))
-start
-p 1
-q 2
-p 1
-f 0
-x 1
-x 1
-y 0
-
-((\q.(((\f.(\x.x)) ((\p.((p (\f1.(\x1.x1))) (\x2.(\y.x2)))) q)) q)) (\x.(\y.x)))
-start
-q 2
-f 0
-x 1
-p 1
-f1 0
-x1 1
-x2 1
-y 0
-
-(((\f.(\x3.x3)) ((\p.((p (\f1.(\x1.x1))) (\x2.(\y1.x2)))) (\x.(\y.x)))) (\x.(\y.x)))
-start
-f 0
-x3 1
-
-((\x3.x3) (\x.(\y.x)))
-start
-x3 1
-
-true
-> (((\p.(\q.((p ((\p.((p (\f.(\x.x))) (\x.(\y.x)))) q)) q))) (\x.(\y.x))) (\f.(\x.x)))
-start
-p 1
-q 2
-p 1
-f 0
-x 1
-x 1
-y 0
-
-((\q.(((\x.(\y.x)) ((\p.((p (\f.(\x1.x1))) (\x2.(\y1.x2)))) q)) q)) (\f.(\x.x)))
-start
-q 2
-x 1
-y 0
-p 1
-f 0
-x1 1
-x2 1
-y1 0
-
-(((\x3.(\y.x3)) ((\p.((p (\f1.(\x1.x1))) (\x2.(\y1.x2)))) (\f.(\x.x)))) (\f.(\x.x)))
-start
-x3 1
-y 0
-
-((\y.((\p.((p (\f1.(\x1.x1))) (\x2.(\y1.x2)))) (\f.(\x.x)))) (\f.(\x.x)))
-start
-y 0
-p 1
-f1 0
-x1 1
-x2 1
-y1 0
-f 0
-x 1
-
-((\p.((p (\f1.(\x1.x1))) (\x2.(\y1.x2)))) (\f2.(\x4.x4)))
-start
-p 1
-f1 0
-x1 1
-x2 1
-y1 0
-
-(((\f2.(\x4.x4)) (\f1.(\x1.x1))) (\x2.(\y1.x2)))
-start
-f2 0
-x4 1
-
-((\x4.x4) (\x2.(\y1.x2)))
-start
-x4 1
-
-true
-> (((\p.(\q.((p ((\p.((p (\f.(\x.x))) (\x.(\y.x)))) q)) q))) (\x.(\y.x))) (\x.(\y.x)))
-start
-p 1
-q 2
-p 1
-f 0
-x 1
-x 1
-y 0
-
-((\q.(((\x.(\y.x)) ((\p.((p (\f.(\x1.x1))) (\x2.(\y1.x2)))) q)) q)) (\x.(\y.x)))
-start
-q 2
-x 1
-y 0
-p 1
-f 0
-x1 1
-x2 1
-y1 0
-
-(((\x3.(\y2.x3)) ((\p.((p (\f.(\x1.x1))) (\x2.(\y1.x2)))) (\x.(\y.x)))) (\x.(\y.x)))
-start
-x3 1
-y2 0
-
-((\y2.((\p.((p (\f.(\x1.x1))) (\x2.(\y1.x2)))) (\x.(\y.x)))) (\x.(\y.x)))
-start
-y2 0
-p 1
-f 0
-x1 1
-x2 1
-y1 0
-x 1
-y 0
-
-((\p.((p (\f.(\x1.x1))) (\x2.(\y1.x2)))) (\x4.(\y3.x4)))
-start
-p 1
-f 0
-x1 1
-x2 1
-y1 0
-
-(((\x4.(\y3.x4)) (\f.(\x1.x1))) (\x2.(\y1.x2)))
-start
-x4 1
-y3 0
-
-((\y3.(\f.(\x1.x1))) (\x2.(\y1.x2)))
-start
-y3 0
-f 0
-x1 1
-
-false
+> false
+> true
+> true
+> false
 > ***********************
 > IF-TESTS
 > ***********************
 > Added (\b.(\T.(\F.((b T) F)))) as if
-> ((((\b.(\T.(\F.((b T) F)))) (((\p.(\q.((p q) p))) (\x.(\y.x))) (\f.(\x.x)))) WRONG-ANSWER) Correct-Answer!)
-start
-b 1
-T 1
-F 1
-
-(((\T.(\F.(((((\p.(\q.((p q) p))) (\x.(\y.x))) (\f.(\x.x))) T) F))) WRONG-ANSWER) Correct-Answer!)
-start
-T 1
-F 1
-p 2
-q 1
-x 1
-y 0
-f 0
-x 1
-
-((\F.(((((\p.(\q.((p q) p))) (\x.(\y.x))) (\f.(\x.x))) WRONG-ANSWER) F)) Correct-Answer!)
-start
-F 1
-p 2
-q 1
-x 1
-y 0
-f 0
-x 1
-
-(((((\p.(\q.((p q) p))) (\x.(\y.x))) (\f.(\x.x))) WRONG-ANSWER) Correct-Answer!)
-start
-p 2
-q 1
-
-((((\q.(((\x.(\y.x)) q) (\x.(\y.x)))) (\f.(\x.x))) WRONG-ANSWER) Correct-Answer!)
-start
-q 1
-x 1
-y 0
-x 1
-y 0
-
-(((((\x1.(\y.x1)) (\f.(\x.x))) (\x2.(\y.x2))) WRONG-ANSWER) Correct-Answer!)
-start
-x1 1
-y 0
-
-((((\y.(\f.(\x.x))) (\x2.(\y.x2))) WRONG-ANSWER) Correct-Answer!)
-start
-y 0
-f 0
-x 1
-
-(((\f.(\x.x)) WRONG-ANSWER) Correct-Answer!)
-start
-f 0
-x 1
-
-((\x.x) Correct-Answer!)
-start
-x 1
-
-Correct-Answer!
+> Correct-Answer!
 > NUMBER-OPERATIONS
 > succ is already defined.
 > Added (\n.(\f.(\x.(((n (\g.(\h.(h (g f))))) (\u.x)) (\u.u))))) as pred
@@ -486,15 +36,75 @@ Correct-Answer!
 > GENERATING-NUMBERS-WITH-RUN
 > ***********************
 > Added (\f.(\x.x)) as 0
-> START HERE
-((\n.(\f.(\x.(f ((n f) x))))) (\f.(\x.x)))
-start
-n 1
-f 2
-x 1
-
-(\f1.(\x1.(f1 (((\f.(\x.x)) f1) x1))))
-start
-f 0
-x 1
-
+> Added (\f1.(\x1.(f1 x1))) as 1
+> Added (\f.(\x.(f (f x)))) as 2
+> Added (\f2.(\x2.(f2 (f2 (f2 x2))))) as 3
+> Added (\f1.(\x1.(f1 (f1 (f1 (f1 x1)))))) as 4
+> Added (\f.(\x.(f (f (f (f (f x))))))) as 5
+> Added (\f1.(\x1.(f1 (f1 (f1 (f1 (f1 (f1 x1)))))))) as 6
+> Added (\f1.(\x1.(f1 (f1 (f1 (f1 (f1 (f1 (f1 x1))))))))) as 7
+> Added (\f11.(\x11.(f11 (f11 (f11 (f11 (f11 (f11 (f11 (f11 x11)))))))))) as 8
+> Added (\f2.(\x2.(f2 (f2 (f2 (f2 (f2 (f2 (f2 (f2 (f2 x2))))))))))) as 9
+> Added (\f3.(\x3.(f3 (f3 (f3 (f3 (f3 (f3 (f3 (f3 (f3 (f3 x3)))))))))))) as 10
+> ***********************
+> NUMBER-TESTS
+> ***********************
+> Added (\n.((n (\p.((p (\f.(\x.x))) (\x.(\y.x))))) (\x.(\y.x)))) as even?
+> Correct-Answer!
+> Correct-Answer!
+> Added (\x.((\p.((p (\f.(\x.x))) (\x.(\y.x)))) ((\n.((n (\p.((p (\f.(\x.x))) (\x.(\y.x))))) (\x.(\y.x)))) x))) as odd?
+> Correct-Answer!
+> Correct-Answer!
+> Added (\n.((n (\x.(\f.(\x.x)))) (\x.(\y.x)))) as zero?
+> Correct-Answer!
+> Correct-Answer!
+> Added (\m.(\n.((\n.((n (\x.(\f.(\x.x)))) (\x.(\y.x)))) (((\m.(\n.((n (\n.(\f.(\x.(((n (\g.(\h.(h (g f))))) (\u.x)) (\u.u)))))) m))) m) n)))) as leq?
+> Correct-Answer!
+> Correct-Answer!
+> Correct-Answer!
+> Added (\a.(\b.((\p.((p (\f.(\x.x))) (\x.(\y.x)))) (((\m.(\n.((\n.((n (\x.(\f.(\x.x)))) (\x.(\y.x)))) (((\m.(\n.((n (\n.(\f.(\x.(((n (\g.(\h.(h (g f))))) (\u.x)) (\u.u)))))) m))) m) n)))) b) a)))) as lt?
+> Correct-Answer!
+> Correct-Answer!
+> Correct-Answer!
+> Added (\a.(\b.((\p.((p (\f.(\x.x))) (\x.(\y.x)))) (((\m.(\n.((\n.((n (\x.(\f.(\x.x)))) (\x.(\y.x)))) (((\m.(\n.((n (\n.(\f.(\x.(((n (\g.(\h.(h (g f))))) (\u.x)) (\u.u)))))) m))) m) n)))) a) b)))) as gt?
+> Correct-Answer!
+> Correct-Answer!
+> Correct-Answer!
+> Added (\m.(\n.(((\p.(\q.((p q) p))) (((\m.(\n.((\n.((n (\x.(\f.(\x.x)))) (\x.(\y.x)))) (((\m.(\n.((n (\n.(\f.(\x.(((n (\g.(\h.(h (g f))))) (\u.x)) (\u.u)))))) m))) m) n)))) m) n)) (((\m.(\n.((\n.((n (\x.(\f.(\x.x)))) (\x.(\y.x)))) (((\m.(\n.((n (\n.(\f.(\x.(((n (\g.(\h.(h (g f))))) (\u.x)) (\u.u)))))) m))) m) n)))) n) m)))) as eq?
+> Correct-Answer!
+> Correct-Answer!
+> Added (\a.(\b.((\p.((p (\f.(\x.x))) (\x.(\y.x)))) (((\m.(\n.(((\p.(\q.((p q) p))) (((\m.(\n.((\n.((n (\x.(\f.(\x.x)))) (\x.(\y.x)))) (((\m.(\n.((n (\n.(\f.(\x.(((n (\g.(\h.(h (g f))))) (\u.x)) (\u.u)))))) m))) m) n)))) m) n)) (((\m.(\n.((\n.((n (\x.(\f.(\x.x)))) (\x.(\y.x)))) (((\m.(\n.((n (\n.(\f.(\x.(((n (\g.(\h.(h (g f))))) (\u.x)) (\u.u)))))) m))) m) n)))) n) m)))) a) b)))) as neq?
+> Correct-Answer!
+> Correct-Answer!
+> Added (\a.(\b.(((\m.(\n.((\n.((n (\x.(\f.(\x.x)))) (\x.(\y.x)))) (((\m.(\n.((n (\n.(\f.(\x.(((n (\g.(\h.(h (g f))))) (\u.x)) (\u.u)))))) m))) m) n)))) b) a))) as geq?
+> Correct-Answer!
+> Correct-Answer!
+> Correct-Answer!
+> ***********************
+> LINKED-LISTS
+> ***********************
+> Added (\x.(\y.(\f.((f x) y)))) as cons
+> (\f.((f A) B))
+> Added (\p.(p (\x.(\y.x)))) as car
+> Correct-Answer!
+> Added (\p.(p (\f.(\x.x)))) as cdr
+> Correct-Answer!
+> Added (\x.(\x.(\y.x))) as null
+> Added (((\x.(\y.(\f.((f x) y)))) C) (((\x.(\y.(\f.((f x) y)))) A) (((\x.(\y.(\f.((f x) y)))) T) (((\x.(\y.(\f.((f x) y)))) S) (\x.(\x.(\y.x))))))) as cats
+> C
+> A
+> T
+> S
+> Added (\p.(p (\x.(\y.(\f.(\x.x)))))) as null?
+> Correct-Answer!
+> Correct-Answer!
+> eq? is already defined.
+> Correct-Answer!
+> Correct-Answer!
+> neq? is already defined.
+> Correct-Answer!
+> Correct-Answer!
+> geq? is already defined.
+> > Added (\f.((\x.(f (x x))) (\x.(f (x x))))) as Y
+> Added ((\f.((\x.(f (x x))) (\x.(f (x x))))) (\f.(\n.((((\b.(\T.(\F.((b T) F)))) ((\n.((n (\x.(\f.(\x.x)))) (\x.(\y.x)))) n)) (\f1.(\x1.(f1 x1)))) (((\n.(\m.(\f.(\x.((n (m f)) x))))) n) (f (((\m.(\n.((n (\n.(\f.(\x.(((n (\g.(\h.(h (g f))))) (\u.x)) (\u.u)))))) m))) n) (\f1.(\x1.(f1 x1)))))))))) as factorial
+> 
